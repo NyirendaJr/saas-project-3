@@ -52,12 +52,12 @@ export const sidebarData: SidebarData = {
             items: [
                 {
                     title: 'Dashboard',
-                    url: '/',
+                    url: route('dashboard'),
                     icon: IconLayoutDashboard,
                 },
                 {
                     title: 'Tasks',
-                    url: '/tasks',
+                    url: route('tasks.index'),
                     icon: IconChecklist,
                 },
                 {
@@ -73,7 +73,7 @@ export const sidebarData: SidebarData = {
                 },
                 {
                     title: 'Users',
-                    url: '/users',
+                    url: route('users.index'),
                     icon: IconUsers,
                 },
                 {
