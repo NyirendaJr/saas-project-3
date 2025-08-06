@@ -33,7 +33,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Redirect to modules dashboard after successful login
+        return redirect()->intended(route('modules.index', absolute: false));
     }
 
     /**

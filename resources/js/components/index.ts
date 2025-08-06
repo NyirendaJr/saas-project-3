@@ -7,6 +7,7 @@ export { DataTableToolbar } from './data-table-toolbar';
 export { DataTableViewOptions } from './data-table-view-options';
 
 // Layout components
+export { ModulePageLayout } from './layout/module-page-layout';
 export { PageLayout } from './layout/page-layout';
 
 // Error handling

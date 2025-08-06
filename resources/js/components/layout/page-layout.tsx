@@ -1,3 +1,4 @@
+import { FontSwitcher } from '@/components/font-switcher';
 import { Header } from '@/components/layout/header';
 import { Main } from '@/components/layout/main';
 import { ProfileDropdown } from '@/components/profile-dropdown';
@@ -22,6 +23,7 @@ export function PageLayout({ children, title, description, primaryButtons, dialo
             <Header fixed={headerFixed}>
                 {showSearch && <Search />}
                 <div className="ml-auto flex items-center space-x-4">
+                    <FontSwitcher />
                     <ThemeSwitch />
                     <ProfileDropdown />
                 </div>
