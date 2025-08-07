@@ -10,6 +10,9 @@ class PermissionTableSeeder extends Seeder
 {
     public function run(): void
     {
-        PermsSeed::seedPermissions();
+        // Use syncPermissions to ensure all permissions are up to date with module information
+        $result = PermsSeed::syncPermissions();
+        
+        $this->command->info("Permissions synced: {$result['synced']} new, {$result['updated']} updated, {$result['total']} total");
     }
 }

@@ -37,6 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/permissions', [App\Http\Controllers\WebPermissionController::class, 'destroyMultiple'])->name('permissions.destroyMultiple');
     Route::get('/permissions/modules/list', [App\Http\Controllers\WebPermissionController::class, 'getModules'])->name('permissions.modules');
     Route::get('/permissions/guards/list', [App\Http\Controllers\WebPermissionController::class, 'getGuards'])->name('permissions.guards');
+    Route::post('/permissions/sync', [App\Http\Controllers\WebPermissionController::class, 'syncPermissions'])->name('permissions.sync');
 
     // Test route for permissions (temporary)
     Route::get('/test-permissions', function () {

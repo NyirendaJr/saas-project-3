@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { AlertCircle, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 import { usePermissions } from '../context/permissions-context';
 
@@ -27,6 +28,10 @@ export function PermissionsDialogs() {
         setIsEditDialogOpen,
         editingPermission,
         selectedPermissions,
+        errorMessage,
+        setErrorMessage,
+        successMessage,
+        setSuccessMessage,
     } = usePermissions();
 
     const [formData, setFormData] = useState({
@@ -57,6 +62,38 @@ export function PermissionsDialogs() {
 
     return (
         <>
+            {/* Error Message Dialog */}
+            <Dialog open={!!errorMessage} onOpenChange={() => setErrorMessage(null)}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-red-600">
+                            <AlertCircle className="h-5 w-5" />
+                            Error
+                        </DialogTitle>
+                        <DialogDescription className="text-red-600">{errorMessage}</DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button onClick={() => setErrorMessage(null)}>OK</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Success Message Dialog */}
+            <Dialog open={!!successMessage} onOpenChange={() => setSuccessMessage(null)}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-green-600">
+                            <CheckCircle className="h-5 w-5" />
+                            Success
+                        </DialogTitle>
+                        <DialogDescription className="text-green-600">{successMessage}</DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button onClick={() => setSuccessMessage(null)}>OK</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
             {/* Create Permission Dialog */}
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">

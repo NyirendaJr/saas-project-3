@@ -1,6 +1,5 @@
-import { DataTable, DataTablePagination, DataTableToolbar, ModulePageLayout } from '@/components';
+import { ApiDataTableWithPagination, DataTableToolbar, PageLayout } from '@/components';
 import { getModuleSidebar } from '@/data/module-sidebars';
-import { ModuleLayout } from '@/layouts/module-layout';
 import { type Module } from '@/types/modules';
 import { Head } from '@inertiajs/react';
 import { columns } from './components/permissions-columns';
@@ -14,9 +13,20 @@ interface PermissionsModuleProps {
     permissions?: any[];
     filters?: any;
     pagination?: any;
+    flash?: {
+        success?: string;
+        error?: string;
+    };
 }
 
-export default function PermissionsModule({ module, userPermissions = [], permissions = [], filters = {}, pagination = {} }: PermissionsModuleProps) {
+export default function PermissionsModule({
+    module,
+    userPermissions = [],
+    permissions = [],
+    filters = {},
+    pagination = {},
+    flash,
+}: PermissionsModuleProps) {
     const sidebarData = getModuleSidebar('settings');
 
     if (!module || !sidebarData) {
@@ -34,48 +44,46 @@ export default function PermissionsModule({ module, userPermissions = [], permis
         <>
             <Head title={`${module.name} - Permissions`} />
 
-            <ModuleLayout module={module} sidebarData={sidebarData}>
-                <PermissionsProvider>
-                    <ModulePageLayout
-                        title="Permissions"
-                        description="Manage system permissions and access controls."
-                        primaryButtons={<PermissionsPrimaryButtons />}
-                        dialogs={<PermissionsDialogs />}
-                    >
-                        <DataTable
-                            data={permissions}
-                            columns={columns}
-                            toolbar={
-                                <DataTableToolbar
-                                    searchKey="name"
-                                    searchPlaceholder="Search permissions..."
-                                    filters={[
-                                        {
-                                            column: 'guard_name',
-                                            title: 'Guard',
-                                            options: [
-                                                { label: 'Web', value: 'web' },
-                                                { label: 'API', value: 'api' },
-                                            ],
-                                        },
-                                        {
-                                            column: 'module',
-                                            title: 'Module',
-                                            options: [
-                                                { label: 'Users', value: 'users' },
-                                                { label: 'Settings', value: 'settings' },
-                                                { label: 'Sales', value: 'sales' },
-                                                { label: 'Reports', value: 'reports' },
-                                            ],
-                                        },
-                                    ]}
-                                />
-                            }
-                            pagination={<DataTablePagination />}
-                        />
-                    </ModulePageLayout>
-                </PermissionsProvider>
-            </ModuleLayout>
+            <PermissionsProvider initialFlash={flash}>
+                <PageLayout
+                    title="Permissions"
+                    description="Manage system permissions and access controls."
+                    primaryButtons={<PermissionsPrimaryButtons />}
+                    dialogs={<PermissionsDialogs />}
+                    module={module}
+                    sidebarData={sidebarData}
+                >
+                    <ApiDataTableWithPagination
+                        columns={columns}
+                        toolbar={
+                            <DataTableToolbar
+                                searchKey="name"
+                                searchPlaceholder="Search permissions..."
+                                filters={[
+                                    {
+                                        column: 'guard_name',
+                                        title: 'Guard',
+                                        options: [
+                                            { label: 'Web', value: 'web' },
+                                            { label: 'API', value: 'api' },
+                                        ],
+                                    },
+                                    {
+                                        column: 'module',
+                                        title: 'Module',
+                                        options: [
+                                            { label: 'Users', value: 'users' },
+                                            { label: 'Settings', value: 'settings' },
+                                            { label: 'Sales', value: 'sales' },
+                                            { label: 'Reports', value: 'reports' },
+                                        ],
+                                    },
+                                ]}
+                            />
+                        }
+                    />
+                </PageLayout>
+            </PermissionsProvider>
         </>
     );
 }

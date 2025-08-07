@@ -25,7 +25,9 @@ class WebPermissionController extends Controller
             'per_page'
         ]);
 
-        $permissions = $this->permissionService->getFilteredPermissions($request);
+        // Get the per_page from request, default to 15
+        $perPage = $request->input('per_page', 15);
+        $permissions = $this->permissionService->getFilteredPermissions($request, $perPage);
 
         return Inertia::render('modules/settings/permissions/index', [
             'module' => [
@@ -196,6 +198,22 @@ class WebPermissionController extends Controller
                 'success' => false,
                 'message' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function syncPermissions()
+    {
+        try {
+            // Check if user has superadmin permissions
+            if (!auth()->check() || !auth()->user()->hasRole('superadmin')) {
+                return back()->with('error', 'Unauthorized. Only superadmin can sync permissions.');
+            }
+
+            $result = \App\Classes\PermsSeed::syncPermissions();
+
+            return back()->with('success', "Permissions synced successfully. {$result['synced']} new permissions created, {$result['updated']} permissions updated.");
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to sync permissions: ' . $e->getMessage());
         }
     }
 } 

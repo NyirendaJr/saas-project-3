@@ -34,12 +34,8 @@ Route::name('auth.')
         });
     });
 
+// Permission routes
 Route::group(['middleware' => 'auth:api'], function () {
-    Route::get('users/active', [UserController::class, 'active'])->name('users.active');
-    Route::get('users/all', [UserController::class, 'all'])->name('users.all');
-    Route::apiResource('users', UserController::class)->names('users');
-    
-    // Permission routes
     Route::get('permissions/all', [PermissionController::class, 'all'])->name('permissions.all');
     Route::get('permissions/modules', [PermissionController::class, 'modules'])->name('permissions.modules');
     Route::get('permissions/guards', [PermissionController::class, 'guards'])->name('permissions.guards');
@@ -47,6 +43,12 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('permissions/guard/{guard}', [PermissionController::class, 'byGuard'])->name('permissions.byGuard');
     Route::delete('permissions/multiple', [PermissionController::class, 'destroyMultiple'])->name('permissions.destroyMultiple');
     Route::apiResource('permissions', PermissionController::class)->names('permissions');
+});
+
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::get('users/active', [UserController::class, 'active'])->name('users.active');
+    Route::get('users/all', [UserController::class, 'all'])->name('users.all');
+    Route::apiResource('users', UserController::class)->names('users');
     
     // Route::apiResource('brands', BrandController::class)->names('brands');
     // Route::post('upload-file', UploadFileController::class);

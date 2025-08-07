@@ -88,6 +88,9 @@ class ModuleController extends Controller
                                 'to' => $permissions->lastItem(),
                             ],
                             'filters' => $filters,
+                        ])->with('flash', [
+                            'success' => session('success'),
+                            'error' => session('error'),
                         ]);
                     } catch (\Exception $e) {
                         // If there's an error (e.g., database not set up), show empty permissions
@@ -104,6 +107,9 @@ class ModuleController extends Controller
                                 'to' => null,
                             ],
                             'filters' => [],
+                        ])->with('flash', [
+                            'success' => session('success'),
+                            'error' => session('error'),
                         ]);
                     }
                 }

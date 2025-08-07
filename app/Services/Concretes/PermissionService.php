@@ -28,6 +28,7 @@ class PermissionService extends BaseService implements PermissionServiceInterfac
      */
     public function getFilteredPermissions(?Request $request = null, int $perPage = 15): LengthAwarePaginator
     {
+        // The repository will automatically use request parameters for filtering and pagination
         return $this->repository->paginateFiltered($perPage);
     }
 

@@ -54,4 +54,10 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+        
+    // JWT Token endpoints
+    Route::get('jwt/token', [AuthenticatedSessionController::class, 'getToken'])
+        ->name('jwt.token');
+    Route::post('jwt/refresh', [AuthenticatedSessionController::class, 'refreshToken'])
+        ->name('jwt.refresh');
 });

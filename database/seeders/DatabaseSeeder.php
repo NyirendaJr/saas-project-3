@@ -14,7 +14,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            PermissionSeeder::class
+            InitialProjectSeeder::class,
+            // PermissionSeeder::class, // Now handled by InitialProjectSeeder
             //LocationSeeder::class,
         ]);
     }
