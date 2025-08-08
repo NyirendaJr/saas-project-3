@@ -1,7 +1,18 @@
 import { type Module } from '@/types/modules';
-import { IconSettings, IconShoppingCart } from '@tabler/icons-react';
+import { IconCash, IconPackage, IconSettings, IconShoppingCart } from '@tabler/icons-react';
 
 export const availableModules: Module[] = [
+    {
+        id: 'inventory',
+        name: 'Inventory Management',
+        description: 'Complete inventory and stock management system',
+        icon: IconPackage,
+        color: 'bg-blue-500',
+        route: '/modules/inventory',
+        permissions: ['brand_view', 'product_view', 'category_view', 'unit_view', 'warehouse_view', 'supplier_view', 'customer_view'],
+        isActive: true,
+        order: 1,
+    },
     {
         id: 'sales',
         name: 'Sales Management',
@@ -9,9 +20,20 @@ export const availableModules: Module[] = [
         icon: IconShoppingCart,
         color: 'bg-emerald-500',
         route: '/modules/sales',
-        permissions: ['view_sales', 'create_sales', 'manage_sales'],
+        permissions: ['sale_view', 'sale_create', 'sale_edit', 'sale_delete'],
         isActive: true,
-        order: 1,
+        order: 2,
+    },
+    {
+        id: 'finance',
+        name: 'Finance Management',
+        description: 'Financial transactions and accounting',
+        icon: IconCash,
+        color: 'bg-green-500',
+        route: '/modules/finance',
+        permissions: ['account_view', 'transaction_view', 'payment_view', 'expense_view'],
+        isActive: true,
+        order: 3,
     },
     {
         id: 'settings',
@@ -20,9 +42,18 @@ export const availableModules: Module[] = [
         icon: IconSettings,
         color: 'bg-slate-500',
         route: '/modules/settings',
-        permissions: ['view_settings', 'manage_settings'],
+        permissions: [
+            'permission_view',
+            'permission_create',
+            'permission_edit',
+            'permission_delete',
+            'role_view',
+            'role_create',
+            'role_edit',
+            'role_delete',
+        ],
         isActive: true,
-        order: 2,
+        order: 4,
     },
 ];
 
@@ -31,6 +62,12 @@ export const getModuleById = (id: string): Module | undefined => {
 };
 
 export const getModulesByPermissions = (userPermissions: string[]): Module[] => {
+    // Ensure userPermissions is an array
+    if (!Array.isArray(userPermissions)) {
+        console.warn('userPermissions is not an array:', userPermissions);
+        return [];
+    }
+
     return availableModules.filter((module) => module.isActive && module.permissions.some((permission) => userPermissions.includes(permission)));
 };
 

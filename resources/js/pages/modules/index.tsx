@@ -1,16 +1,21 @@
 import { ModulesGrid } from '@/components/modules/modules-grid';
 import { getModulesForUser } from '@/data/modules';
-import { type Module } from '@/types/modules';
 import { Head } from '@inertiajs/react';
 
 interface ModulesPageProps {
-    userPermissions: string[];
-    modules?: Module[];
+    userPermissions: {
+        permissions: string[];
+        [key: string]: any;
+    };
+    modules?: any; // Backend modules data (not used for grid)
 }
 
 export default function ModulesPage({ userPermissions, modules }: ModulesPageProps) {
-    // If modules are not provided, get them based on user permissions
-    const availableModules = modules || getModulesForUser(userPermissions);
+    // Extract the flat permissions array from the complex userPermissions object
+    const permissions = userPermissions?.permissions || [];
+
+    // Always use frontend modules data for the grid
+    const availableModules = getModulesForUser(permissions);
 
     return (
         <>

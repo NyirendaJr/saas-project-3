@@ -9,158 +9,138 @@ class PermsSeed
 {
     public static array $mainPermissionsArray = [
         // Brand
-        'brands_view' => [
-            'name' => 'brands_view',
-            'display_name' => 'Brand View',
-            'module' => 'inventory',
-            'description' => 'View brand information'
-        ],
-        'brands_create' => [
-            'name' => 'brands_create',
-            'display_name' => 'Brand Create',
-            'module' => 'inventory',
-            'description' => 'Create new brands'
-        ],
-        'brands_edit' => [
-            'name' => 'brands_edit',
-            'display_name' => 'Brand Edit',
-            'module' => 'inventory',
-            'description' => 'Edit existing brands'
-        ],
-        'brands_delete' => [
-            'name' => 'brands_delete',
-            'display_name' => 'Brand Delete',
-            'module' => 'inventory',
-            'description' => 'Delete brands'
-        ],
+        'brand_view' => ['name' => 'brand_view', 'display_name' => 'Brand View', 'module' => 'inventory', 'description' => 'View brand information'],
+        'brand_create' => ['name' => 'brand_create', 'display_name' => 'Brand Create', 'module' => 'inventory', 'description' => 'Create new brands'],
+        'brand_edit' => ['name' => 'brand_edit', 'display_name' => 'Brand Edit', 'module' => 'inventory', 'description' => 'Edit existing brands'],
+        'brand_delete' => ['name' => 'brand_delete', 'display_name' => 'Brand Delete', 'module' => 'inventory', 'description' => 'Delete brands'],
 
         // Category
-        'categories_view' => [
-            'name' => 'categories_view',
+        'category_view' => [
+            'name' => 'category_view',
             'display_name' => 'Category View',
             'module' => 'inventory',
             'description' => 'View category information'
         ],
-        'categories_create' => [
-            'name' => 'categories_create',
+        'category_create' => [
+            'name' => 'category_create',
             'display_name' => 'Category Create',
             'module' => 'inventory',
             'description' => 'Create new categories'
         ],
-        'categories_edit' => [
-            'name' => 'categories_edit',
+        'category_edit' => [
+            'name' => 'category_edit',
             'display_name' => 'Category Edit',
             'module' => 'inventory',
             'description' => 'Edit existing categories'
         ],
-        'categories_delete' => [
-            'name' => 'categories_delete',
+        'category_delete' => [
+            'name' => 'category_delete',
             'display_name' => 'Category Delete',
             'module' => 'inventory',
             'description' => 'Delete categories'
         ],
 
         // Product
-        'products_view' => [
-            'name' => 'products_view',
+        'product_view' => [
+            'name' => 'product_view',
             'display_name' => 'Product View',
             'module' => 'inventory',
             'description' => 'View product information'
         ],
-        'products_create' => [
-            'name' => 'products_create',
+        'product_create' => [
+            'name' => 'product_create',
             'display_name' => 'Product Create',
             'module' => 'inventory',
             'description' => 'Create new products'
         ],
-        'products_edit' => [
-            'name' => 'products_edit',
+        'product_edit' => [
+            'name' => 'product_edit',
             'display_name' => 'Product Edit',
             'module' => 'inventory',
             'description' => 'Edit existing products'
         ],
-        'products_delete' => [
-            'name' => 'products_delete',
+        'product_delete' => [
+            'name' => 'product_delete',
             'display_name' => 'Product Delete',
             'module' => 'inventory',
             'description' => 'Delete products'
         ],
 
         // Variation
-        'variations_view' => [
-            'name' => 'variations_view',
+        'variation_view' => [
+            'name' => 'variation_view',
             'display_name' => 'Variation View',
             'module' => 'inventory',
             'description' => 'View product variations'
         ],
-        'variations_create' => [
-            'name' => 'variations_create',
+        'variation_create' => [
+            'name' => 'variation_create',
             'display_name' => 'Variation Create',
             'module' => 'inventory',
             'description' => 'Create new variations'
         ],
-        'variations_edit' => [
-            'name' => 'variations_edit',
+        'variation_edit' => [
+            'name' => 'variation_edit',
             'display_name' => 'Variation Edit',
             'module' => 'inventory',
             'description' => 'Edit existing variations'
         ],
-        'variations_delete' => [
-            'name' => 'variations_delete',
+        'variation_delete' => [
+            'name' => 'variation_delete',
             'display_name' => 'Variation Delete',
             'module' => 'inventory',
             'description' => 'Delete variations'
         ],
 
         // Purchase
-        'purchases_view' => [
-            'name' => 'purchases_view',
+        'purchase_view' => [
+            'name' => 'purchase_view',
             'display_name' => 'Purchase View',
-            'module' => 'purchases',
+            'module' => 'inventory',
             'description' => 'View purchase information'
         ],
-        'purchases_create' => [
-            'name' => 'purchases_create',
+        'purchase_create' => [
+            'name' => 'purchase_create',
             'display_name' => 'Purchase Create',
-            'module' => 'purchases',
+            'module' => 'inventory',
             'description' => 'Create new purchases'
         ],
-        'purchases_edit' => [
-            'name' => 'purchases_edit',
+        'purchase_edit' => [
+            'name' => 'purchase_edit',
             'display_name' => 'Purchase Edit',
-            'module' => 'purchases',
+            'module' => 'inventory',
             'description' => 'Edit existing purchases'
         ],
-        'purchases_delete' => [
-            'name' => 'purchases_delete',
+        'purchase_delete' => [
+            'name' => 'purchase_delete',
             'display_name' => 'Purchase Delete',
-            'module' => 'purchases',
+            'module' => 'inventory',
             'description' => 'Delete purchases'
         ],
 
         // Purchase Return
-        'purchase_returns_view' => [
-            'name' => 'purchase_returns_view',
+        'purchase_return_view' => [
+            'name' => 'purchase_return_view',
             'display_name' => 'Purchase Return View',
-            'module' => 'purchases',
+            'module' => 'inventory',
             'description' => 'View purchase returns'
         ],
-        'purchase_returns_create' => [
-            'name' => 'purchase_returns_create',
+        'purchase_return_create' => [
+            'name' => 'purchase_return_create',
             'display_name' => 'Purchase Return Create',
-            'module' => 'purchases',
+            'module' => 'inventory',
             'description' => 'Create new purchase returns'
         ],
-        'purchase_returns_edit' => [
-            'name' => 'purchase_returns_edit',
+        'purchase_return_edit' => [
+            'name' => 'purchase_return_edit',
             'display_name' => 'Purchase Return Edit',
-            'module' => 'purchases',
+            'module' => 'inventory',
             'description' => 'Edit existing purchase returns'
         ],
-        'purchase_returns_delete' => [
-            'name' => 'purchase_returns_delete',
+        'purchase_return_delete' => [
+            'name' => 'purchase_return_delete',
             'display_name' => 'Purchase Return Delete',
-            'module' => 'purchases',
+            'module' => 'inventory',
             'description' => 'Delete purchase returns'
         ],
 
@@ -217,508 +197,508 @@ class PermsSeed
         ],
 
         // Sales
-        'sales_view' => [
-            'name' => 'sales_view',
+        'sale_view' => [
+            'name' => 'sale_view',
             'display_name' => 'Sales View',
-            'module' => 'sales',
+            'module' => 'inventory',
             'description' => 'View sales information'
         ],
-        'sales_create' => [
-            'name' => 'sales_create',
+        'sale_create' => [
+            'name' => 'sale_create',
             'display_name' => 'Sales Create',
-            'module' => 'sales',
+            'module' => 'inventory',
             'description' => 'Create new sales'
         ],
-        'sales_edit' => [
-            'name' => 'sales_edit',
+        'sale_edit' => [
+            'name' => 'sale_edit',
             'display_name' => 'Sales Edit',
-            'module' => 'sales',
+            'module' => 'inventory',
             'description' => 'Edit existing sales'
         ],
-        'sales_delete' => [
-            'name' => 'sales_delete',
+        'sale_delete' => [
+            'name' => 'sale_delete',
             'display_name' => 'Sales Delete',
-            'module' => 'sales',
+            'module' => 'inventory',
             'description' => 'Delete sales'
         ],
 
         // Sales Return
-        'sales_returns_view' => [
-            'name' => 'sales_returns_view',
+        'sale_return_view' => [
+            'name' => 'sale_return_view',
             'display_name' => 'Sales Return View',
-            'module' => 'sales',
+            'module' => 'inventory',
             'description' => 'View sales returns'
         ],
-        'sales_returns_create' => [
-            'name' => 'sales_returns_create',
+        'sale_return_create' => [
+            'name' => 'sale_return_create',
             'display_name' => 'Sales Return Create',
-            'module' => 'sales',
+            'module' => 'inventory',
             'description' => 'Create new sales returns'
         ],
-        'sales_returns_edit' => [
-            'name' => 'sales_returns_edit',
+        'sale_return_edit' => [
+            'name' => 'sale_return_edit',
             'display_name' => 'Sales Return Edit',
-            'module' => 'sales',
+            'module' => 'inventory',
             'description' => 'Edit existing sales returns'
         ],
-        'sales_returns_delete' => [
-            'name' => 'sales_returns_delete',
+        'sale_return_delete' => [
+            'name' => 'sale_return_delete',
             'display_name' => 'Sales Return Delete',
-            'module' => 'sales',
+            'module' => 'inventory',
             'description' => 'Delete sales returns'
         ],
 
         // Order Payments
-        'order_payments_view' => [
-            'name' => 'order_payments_view',
+        'order_payment_view' => [
+            'name' => 'order_payment_view',
             'display_name' => 'Order Payments View',
-            'module' => 'sales',
+            'module' => 'inventory',
             'description' => 'View order payments'
         ],
-        'order_payments_create' => [
-            'name' => 'order_payments_create',
+        'order_payment_create' => [
+            'name' => 'order_payment_create',
             'display_name' => 'Order Payments Create',
-            'module' => 'sales',
+            'module' => 'inventory',
             'description' => 'Create order payments'
         ],
 
         // Order Items
-        'order_items_view' => [
-            'name' => 'order_items_view',
+        'order_item_view' => [
+            'name' => 'order_item_view',
             'display_name' => 'Order Items View',
-            'module' => 'sales',
+            'module' => 'inventory',
             'description' => 'View order items'
         ],
 
         // Stock Adjustment
-        'stock_adjustments_view' => [
-            'name' => 'stock_adjustments_view',
+        'stock_adjustment_view' => [
+            'name' => 'stock_adjustment_view',
             'display_name' => 'Stock Adjustment View',
             'module' => 'inventory',
             'description' => 'View stock adjustments'
         ],
-        'stock_adjustments_create' => [
-            'name' => 'stock_adjustments_create',
+        'stock_adjustment_create' => [
+            'name' => 'stock_adjustment_create',
             'display_name' => 'Stock Adjustment Create',
             'module' => 'inventory',
             'description' => 'Create stock adjustments'
         ],
-        'stock_adjustments_edit' => [
-            'name' => 'stock_adjustments_edit',
+        'stock_adjustment_edit' => [
+            'name' => 'stock_adjustment_edit',
             'display_name' => 'Stock Adjustment Edit',
             'module' => 'inventory',
             'description' => 'Edit stock adjustments'
         ],
-        'stock_adjustments_delete' => [
-            'name' => 'stock_adjustments_delete',
+        'stock_adjustment_delete' => [
+            'name' => 'stock_adjustment_delete',
             'display_name' => 'Stock Adjustment Delete',
             'module' => 'inventory',
             'description' => 'Delete stock adjustments'
         ],
 
         // Stock Transfer
-        'stock_transfers_view' => [
-            'name' => 'stock_transfers_view',
+        'stock_transfer_view' => [
+            'name' => 'stock_transfer_view',
             'display_name' => 'Stock Transfer View',
             'module' => 'inventory',
             'description' => 'View stock transfers'
         ],
-        'stock_transfers_create' => [
-            'name' => 'stock_transfers_create',
+        'stock_transfer_create' => [
+            'name' => 'stock_transfer_create',
             'display_name' => 'Stock Transfer Create',
             'module' => 'inventory',
             'description' => 'Create stock transfers'
         ],
-        'stock_transfers_edit' => [
-            'name' => 'stock_transfers_edit',
+        'stock_transfer_edit' => [
+            'name' => 'stock_transfer_edit',
             'display_name' => 'Stock Transfer Edit',
             'module' => 'inventory',
             'description' => 'Edit stock transfers'
         ],
-        'stock_transfers_delete' => [
-            'name' => 'stock_transfers_delete',
+        'stock_transfer_delete' => [
+            'name' => 'stock_transfer_delete',
             'display_name' => 'Stock Transfer Delete',
             'module' => 'inventory',
             'description' => 'Delete stock transfers'
         ],
 
         // Quotation
-        'quotations_view' => [
-            'name' => 'quotations_view',
+        'quotation_view' => [
+            'name' => 'quotation_view',
             'display_name' => 'Quotation View',
-            'module' => 'sales',
+            'module' => 'inventory',
             'description' => 'View quotations'
         ],
-        'quotations_create' => [
-            'name' => 'quotations_create',
+        'quotation_create' => [
+            'name' => 'quotation_create',
             'display_name' => 'Quotation Create',
-            'module' => 'sales',
+            'module' => 'inventory',
             'description' => 'Create new quotations'
         ],
-        'quotations_edit' => [
-            'name' => 'quotations_edit',
+        'quotation_edit' => [
+            'name' => 'quotation_edit',
             'display_name' => 'Quotation Edit',
-            'module' => 'sales',
+            'module' => 'inventory',
             'description' => 'Edit existing quotations'
         ],
-        'quotations_delete' => [
-            'name' => 'quotations_delete',
+        'quotation_delete' => [
+            'name' => 'quotation_delete',
             'display_name' => 'Quotation Delete',
-            'module' => 'sales',
+            'module' => 'inventory',
             'description' => 'Delete quotations'
         ],
 
         // Expense Category
-        'expense_categories_view' => [
-            'name' => 'expense_categories_view',
+        'expense_category_view' => [
+            'name' => 'expense_category_view',
             'display_name' => 'Expense Category View',
             'module' => 'finance',
             'description' => 'View expense categories'
         ],
-        'expense_categories_create' => [
-            'name' => 'expense_categories_create',
+        'expense_category_create' => [
+            'name' => 'expense_category_create',
             'display_name' => 'Expense Category Create',
             'module' => 'finance',
             'description' => 'Create expense categories'
         ],
-        'expense_categories_edit' => [
-            'name' => 'expense_categories_edit',
+        'expense_category_edit' => [
+            'name' => 'expense_category_edit',
             'display_name' => 'Expense Category Edit',
             'module' => 'finance',
             'description' => 'Edit expense categories'
         ],
-        'expense_categories_delete' => [
-            'name' => 'expense_categories_delete',
+        'expense_category_delete' => [
+            'name' => 'expense_category_delete',
             'display_name' => 'Expense Category Delete',
             'module' => 'finance',
             'description' => 'Delete expense categories'
         ],
 
         // Expense
-        'expenses_view' => [
-            'name' => 'expenses_view',
+        'expense_view' => [
+            'name' => 'expense_view',
             'display_name' => 'Expense View',
             'module' => 'finance',
             'description' => 'View expenses'
         ],
-        'expenses_create' => [
-            'name' => 'expenses_create',
+        'expense_create' => [
+            'name' => 'expense_create',
             'display_name' => 'Expense Create',
             'module' => 'finance',
             'description' => 'Create new expenses'
         ],
-        'expenses_edit' => [
-            'name' => 'expenses_edit',
+        'expense_edit' => [
+            'name' => 'expense_edit',
             'display_name' => 'Expense Edit',
             'module' => 'finance',
             'description' => 'Edit existing expenses'
         ],
-        'expenses_delete' => [
-            'name' => 'expenses_delete',
+        'expense_delete' => [
+            'name' => 'expense_delete',
             'display_name' => 'Expense Delete',
             'module' => 'finance',
             'description' => 'Delete expenses'
         ],
 
         // Unit
-        'units_view' => [
-            'name' => 'units_view',
+        'unit_view' => [
+            'name' => 'unit_view',
             'display_name' => 'Unit View',
             'module' => 'inventory',
             'description' => 'View units'
         ],
-        'units_create' => [
-            'name' => 'units_create',
+        'unit_create' => [
+            'name' => 'unit_create',
             'display_name' => 'Unit Create',
             'module' => 'inventory',
             'description' => 'Create new units'
         ],
-        'units_edit' => [
-            'name' => 'units_edit',
+        'unit_edit' => [
+            'name' => 'unit_edit',
             'display_name' => 'Unit Edit',
             'module' => 'inventory',
             'description' => 'Edit existing units'
         ],
-        'units_delete' => [
-            'name' => 'units_delete',
+        'unit_delete' => [
+            'name' => 'unit_delete',
             'display_name' => 'Unit Delete',
             'module' => 'inventory',
             'description' => 'Delete units'
         ],
 
         // Custom Fields
-        'custom_fields_view' => [
-            'name' => 'custom_fields_view',
+        'custom_field_view' => [
+            'name' => 'custom_field_view',
             'display_name' => 'Custom Field View',
             'module' => 'settings',
             'description' => 'View custom fields'
         ],
-        'custom_fields_create' => [
-            'name' => 'custom_fields_create',
+        'custom_field_create' => [
+            'name' => 'custom_field_create',
             'display_name' => 'Custom Field Create',
             'module' => 'settings',
             'description' => 'Create custom fields'
         ],
-        'custom_fields_edit' => [
-            'name' => 'custom_fields_edit',
+        'custom_field_edit' => [
+            'name' => 'custom_field_edit',
             'display_name' => 'Custom Field Edit',
             'module' => 'settings',
             'description' => 'Edit custom fields'
         ],
-        'custom_fields_delete' => [
-            'name' => 'custom_fields_delete',
+        'custom_field_delete' => [
+            'name' => 'custom_field_delete',
             'display_name' => 'Custom Field Delete',
             'module' => 'settings',
             'description' => 'Delete custom fields'
         ],
 
         // Payment Mode
-        'payment_modes_view' => [
-            'name' => 'payment_modes_view',
+        'payment_mode_view' => [
+            'name' => 'payment_mode_view',
             'display_name' => 'Payment Mode View',
             'module' => 'settings',
             'description' => 'View payment modes'
         ],
-        'payment_modes_create' => [
-            'name' => 'payment_modes_create',
+        'payment_mode_create' => [
+            'name' => 'payment_mode_create',
             'display_name' => 'Payment Mode Create',
             'module' => 'settings',
             'description' => 'Create payment modes'
         ],
-        'payment_modes_edit' => [
-            'name' => 'payment_modes_edit',
+        'payment_mode_edit' => [
+            'name' => 'payment_mode_edit',
             'display_name' => 'Payment Mode Edit',
             'module' => 'settings',
             'description' => 'Edit payment modes'
         ],
-        'payment_modes_delete' => [
-            'name' => 'payment_modes_delete',
+        'payment_mode_delete' => [
+            'name' => 'payment_mode_delete',
             'display_name' => 'Payment Mode Delete',
             'module' => 'settings',
             'description' => 'Delete payment modes'
         ],
 
         // Currency
-        'currencies_view' => [
-            'name' => 'currencies_view',
+        'currency_view' => [
+            'name' => 'currency_view',
             'display_name' => 'Currency View',
             'module' => 'settings',
             'description' => 'View currencies'
         ],
-        'currencies_create' => [
-            'name' => 'currencies_create',
+        'currency_create' => [
+            'name' => 'currency_create',
             'display_name' => 'Currency Create',
             'module' => 'settings',
             'description' => 'Create new currencies'
         ],
-        'currencies_edit' => [
-            'name' => 'currencies_edit',
+        'currency_edit' => [
+            'name' => 'currency_edit',
             'display_name' => 'Currency Edit',
             'module' => 'settings',
             'description' => 'Edit existing currencies'
         ],
-        'currencies_delete' => [
-            'name' => 'currencies_delete',
+        'currency_delete' => [
+            'name' => 'currency_delete',
             'display_name' => 'Currency Delete',
             'module' => 'settings',
             'description' => 'Delete currencies'
         ],
 
         // Tax
-        'taxes_view' => [
-            'name' => 'taxes_view',
+        'tax_view' => [
+            'name' => 'tax_view',
             'display_name' => 'Tax View',
             'module' => 'settings',
             'description' => 'View taxes'
         ],
-        'taxes_create' => [
-            'name' => 'taxes_create',
+        'tax_create' => [
+            'name' => 'tax_create',
             'display_name' => 'Tax Create',
             'module' => 'settings',
             'description' => 'Create new taxes'
         ],
-        'taxes_edit' => [
-            'name' => 'taxes_edit',
+        'tax_edit' => [
+            'name' => 'tax_edit',
             'display_name' => 'Tax Edit',
             'module' => 'settings',
             'description' => 'Edit existing taxes'
         ],
-        'taxes_delete' => [
-            'name' => 'taxes_delete',
+        'tax_delete' => [
+            'name' => 'tax_delete',
             'display_name' => 'Tax Delete',
             'module' => 'settings',
             'description' => 'Delete taxes'
         ],
 
         // Modules
-        'modules_view' => [
-            'name' => 'modules_view',
+        'module_view' => [
+            'name' => 'module_view',
             'display_name' => 'Modules View',
             'module' => 'settings',
             'description' => 'View system modules'
         ],
 
         // Role
-        'roles_view' => [
-            'name' => 'roles_view',
+        'role_view' => [
+            'name' => 'role_view',
             'display_name' => 'Role View',
             'module' => 'settings',
             'description' => 'View roles'
         ],
-        'roles_create' => [
-            'name' => 'roles_create',
+        'role_create' => [
+            'name' => 'role_create',
             'display_name' => 'Role Create',
             'module' => 'settings',
             'description' => 'Create new roles'
         ],
-        'roles_edit' => [
-            'name' => 'roles_edit',
+        'role_edit' => [
+            'name' => 'role_edit',
             'display_name' => 'Role Edit',
             'module' => 'settings',
             'description' => 'Edit existing roles'
         ],
-        'roles_delete' => [
-            'name' => 'roles_delete',
+        'role_delete' => [
+            'name' => 'role_delete',
             'display_name' => 'Role Delete',
             'module' => 'settings',
             'description' => 'Delete roles'
         ],
 
         // Warehouse
-        'warehouses_view' => [
-            'name' => 'warehouses_view',
+        'warehouse_view' => [
+            'name' => 'warehouse_view',
             'display_name' => 'Warehouse View',
             'module' => 'inventory',
             'description' => 'View warehouses'
         ],
-        'warehouses_create' => [
-            'name' => 'warehouses_create',
+        'warehouse_create' => [
+            'name' => 'warehouse_create',
             'display_name' => 'Warehouse Create',
             'module' => 'inventory',
             'description' => 'Create new warehouses'
         ],
-        'warehouses_edit' => [
-            'name' => 'warehouses_edit',
+        'warehouse_edit' => [
+            'name' => 'warehouse_edit',
             'display_name' => 'Warehouse Edit',
             'module' => 'inventory',
             'description' => 'Edit existing warehouses'
         ],
-        'warehouses_delete' => [
-            'name' => 'warehouses_delete',
+        'warehouse_delete' => [
+            'name' => 'warehouse_delete',
             'display_name' => 'Warehouse Delete',
             'module' => 'inventory',
             'description' => 'Delete warehouses'
         ],
 
         // Company
-        'companies_edit' => [
-            'name' => 'companies_edit',
+        'company_edit' => [
+            'name' => 'company_edit',
             'display_name' => 'Company Edit',
             'module' => 'settings',
             'description' => 'Edit company information'
         ],
 
         // Translation
-        'translations_view' => [
-            'name' => 'translations_view',
+        'translation_view' => [
+            'name' => 'translation_view',
             'display_name' => 'Translation View',
             'module' => 'settings',
             'description' => 'View translations'
         ],
-        'translations_create' => [
-            'name' => 'translations_create',
+        'translation_create' => [
+            'name' => 'translation_create',
             'display_name' => 'Translation Create',
             'module' => 'settings',
             'description' => 'Create new translations'
         ],
-        'translations_edit' => [
-            'name' => 'translations_edit',
+        'translation_edit' => [
+            'name' => 'translation_edit',
             'display_name' => 'Translation Edit',
             'module' => 'settings',
             'description' => 'Edit existing translations'
         ],
-        'translations_delete' => [
-            'name' => 'translations_delete',
+        'translation_delete' => [
+            'name' => 'translation_delete',
             'display_name' => 'Translation Delete',
             'module' => 'settings',
             'description' => 'Delete translations'
         ],
 
         // Staff Member
-        'users_view' => [
-            'name' => 'users_view',
+        'user_view' => [
+            'name' => 'user_view',
             'display_name' => 'Staff Member View',
             'module' => 'settings',
             'description' => 'View staff members'
         ],
-        'users_create' => [
-            'name' => 'users_create',
+        'user_create' => [
+            'name' => 'user_create',
             'display_name' => 'Staff Member Create',
             'module' => 'settings',
             'description' => 'Create new staff members'
         ],
-        'users_edit' => [
-            'name' => 'users_edit',
+        'user_edit' => [
+            'name' => 'user_edit',
             'display_name' => 'Staff Member Edit',
             'module' => 'settings',
             'description' => 'Edit existing staff members'
         ],
-        'users_delete' => [
-            'name' => 'users_delete',
+        'user_delete' => [
+            'name' => 'user_delete',
             'display_name' => 'Staff Member Delete',
             'module' => 'settings',
             'description' => 'Delete staff members'
         ],
 
         // Customer
-        'customers_view' => [
-            'name' => 'customers_view',
+        'customer_view' => [
+            'name' => 'customer_view',
             'display_name' => 'Customer View',
-            'module' => 'customers',
+            'module' => 'inventory',
             'description' => 'View customers'
         ],
-        'customers_create' => [
-            'name' => 'customers_create',
+        'customer_create' => [
+            'name' => 'customer_create',
             'display_name' => 'Customer Create',
-            'module' => 'customers',
+            'module' => 'inventory',
             'description' => 'Create new customers'
         ],
-        'customers_edit' => [
-            'name' => 'customers_edit',
+        'customer_edit' => [
+            'name' => 'customer_edit',
             'display_name' => 'Customer Edit',
-            'module' => 'customers',
+            'module' => 'inventory',
             'description' => 'Edit existing customers'
         ],
-        'customers_delete' => [
-            'name' => 'customers_delete',
+        'customer_delete' => [
+            'name' => 'customer_delete',
             'display_name' => 'Customer Delete',
-            'module' => 'customers',
+            'module' => 'inventory',
             'description' => 'Delete customers'
         ],
 
         // Supplier
-        'suppliers_view' => [
-            'name' => 'suppliers_view',
+        'supplier_view' => [
+            'name' => 'supplier_view',
             'display_name' => 'Supplier View',
-            'module' => 'suppliers',
+            'module' => 'inventory',
             'description' => 'View suppliers'
         ],
-        'suppliers_create' => [
-            'name' => 'suppliers_create',
+        'supplier_create' => [
+            'name' => 'supplier_create',
             'display_name' => 'Supplier Create',
-            'module' => 'suppliers',
+            'module' => 'inventory',
             'description' => 'Create new suppliers'
         ],
-        'suppliers_edit' => [
-            'name' => 'suppliers_edit',
+        'supplier_edit' => [
+            'name' => 'supplier_edit',
             'display_name' => 'Supplier Edit',
-            'module' => 'suppliers',
+            'module' => 'inventory',
             'description' => 'Edit existing suppliers'
         ],
-        'suppliers_delete' => [
-            'name' => 'suppliers_delete',
+        'supplier_delete' => [
+            'name' => 'supplier_delete',
             'display_name' => 'Supplier Delete',
-            'module' => 'suppliers',
+            'module' => 'inventory',
             'description' => 'Delete suppliers'
         ],
 
@@ -769,6 +749,15 @@ class PermsSeed
             'module' => 'inventory',
             'description' => 'View purchase prices'
         ],
+
+        // Permission model permissions
+        'permission_view' => [
+            'name' => 'permission_view',
+            'display_name' => 'Permission View',
+            'module' => 'settings',
+            'description' => 'View permissions'
+        ],
+
     ];
 
     public static $eStorePermissions = [];

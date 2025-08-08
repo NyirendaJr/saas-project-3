@@ -13,12 +13,14 @@ use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory;
+    use HasApiTokens;
     use Notifiable;
     use HasUuids;
     use HasRoles;

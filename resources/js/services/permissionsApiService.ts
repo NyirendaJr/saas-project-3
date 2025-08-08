@@ -1,5 +1,4 @@
-import axios from 'axios';
-import JWTService from './jwtService';
+import apiClient from './axiosConfig';
 
 export interface Permission {
     id: number;
@@ -22,6 +21,28 @@ export interface PaginationData {
     to: number;
 }
 
+export interface PaginationLinks {
+    first: string | null;
+    last: string | null;
+    prev: string | null;
+    next: string | null;
+}
+
+export interface PaginationMeta {
+    current_page: number;
+    from: number;
+    last_page: number;
+    links: Array<{
+        url: string | null;
+        label: string;
+        active: boolean;
+    }>;
+    path: string;
+    per_page: number;
+    to: number;
+    total: number;
+}
+
 export interface ApiResponse<T> {
     success: boolean;
     data: T;
@@ -30,22 +51,32 @@ export interface ApiResponse<T> {
 
 export interface PaginatedResponse<T> {
     data: T[];
-    pagination: PaginationData;
+    links: PaginationLinks;
+    meta: PaginationMeta;
 }
 
 export interface PermissionFilters {
-    search?: string;
+    // Global search (uses the 'global' filter)
+    global?: string;
+    // Exact filters
+    id?: number;
+    name?: string;
     guard_name?: string;
     module?: string;
-    sort_by?: string;
-    sort_order?: 'asc' | 'desc';
+    description?: string;
+    // Sorting (Spatie uses 'sort' parameter)
+    sort?: string;
+    // Pagination
     per_page?: number;
     page?: number;
+    // Includes (for relationships)
+    include?: string;
+    // Fields (for selecting specific fields)
+    fields?: string;
 }
 
 class PermissionsApiService {
-    private baseUrl = '/api/v1/permissions';
-    private jwtService = JWTService.getInstance();
+    private baseUrl = '/permissions';
 
     /**
      * Get paginated permissions with filters
@@ -53,27 +84,41 @@ class PermissionsApiService {
     async getPermissions(filters: PermissionFilters = {}): Promise<PaginatedResponse<Permission>> {
         const params = new URLSearchParams();
 
+        // Handle Spatie Query Builder parameters
         Object.entries(filters).forEach(([key, value]) => {
             if (value !== undefined && value !== null && value !== '') {
-                params.append(key, value.toString());
+                // For filters, we need to prefix with 'filter[field_name]'
+                if (key !== 'sort' && key !== 'page' && key !== 'per_page' && key !== 'include' && key !== 'fields') {
+                    params.append(`filter[${key}]`, value.toString());
+                } else {
+                    params.append(key, value.toString());
+                }
             }
         });
 
         try {
-            const response = await axios.get(`${this.baseUrl}?${params.toString()}`);
+            const response = await apiClient.get(`${this.baseUrl}?${params.toString()}`);
             return response.data;
         } catch (error) {
             console.error('API Error:', error);
             // Return empty response with default pagination on error
             return {
                 data: [],
-                pagination: {
+                links: {
+                    first: null,
+                    last: null,
+                    prev: null,
+                    next: null,
+                },
+                meta: {
                     current_page: 1,
                     last_page: 1,
-                    per_page: filters.per_page || 15,
+                    per_page: filters.per_page || 10,
                     total: 0,
                     from: 0,
                     to: 0,
+                    path: this.baseUrl,
+                    links: [],
                 },
             };
         }
@@ -83,7 +128,7 @@ class PermissionsApiService {
      * Get all permissions (without pagination)
      */
     async getAllPermissions(): Promise<Permission[]> {
-        const response = await axios.get(`${this.baseUrl}/all`);
+        const response = await apiClient.get(`${this.baseUrl}/all`);
         return response.data.data;
     }
 
@@ -91,7 +136,7 @@ class PermissionsApiService {
      * Get permission by ID
      */
     async getPermission(id: number): Promise<Permission> {
-        const response = await axios.get(`${this.baseUrl}/${id}`);
+        const response = await apiClient.get(`${this.baseUrl}/${id}`);
         return response.data.data;
     }
 
@@ -99,7 +144,7 @@ class PermissionsApiService {
      * Create new permission
      */
     async createPermission(data: Partial<Permission>): Promise<Permission> {
-        const response = await axios.post(this.baseUrl, data);
+        const response = await apiClient.post(this.baseUrl, data);
         return response.data.data;
     }
 
@@ -107,7 +152,7 @@ class PermissionsApiService {
      * Update permission
      */
     async updatePermission(id: number, data: Partial<Permission>): Promise<Permission> {
-        const response = await axios.put(`${this.baseUrl}/${id}`, data);
+        const response = await apiClient.put(`${this.baseUrl}/${id}`, data);
         return response.data.data;
     }
 
@@ -115,14 +160,14 @@ class PermissionsApiService {
      * Delete permission
      */
     async deletePermission(id: number): Promise<void> {
-        await axios.delete(`${this.baseUrl}/${id}`);
+        await apiClient.delete(`${this.baseUrl}/${id}`);
     }
 
     /**
      * Delete multiple permissions
      */
     async deleteMultiplePermissions(ids: number[]): Promise<{ message: string }> {
-        const response = await axios.post(`${this.baseUrl}/destroy-multiple`, { ids });
+        const response = await apiClient.post(`${this.baseUrl}/destroy-multiple`, { ids });
         return response.data.data;
     }
 
@@ -130,7 +175,7 @@ class PermissionsApiService {
      * Get permissions by module
      */
     async getPermissionsByModule(module: string): Promise<Permission[]> {
-        const response = await axios.get(`${this.baseUrl}/by-module/${module}`);
+        const response = await apiClient.get(`${this.baseUrl}/by-module/${module}`);
         return response.data.data;
     }
 
@@ -138,7 +183,7 @@ class PermissionsApiService {
      * Get permissions by guard
      */
     async getPermissionsByGuard(guard: string): Promise<Permission[]> {
-        const response = await axios.get(`${this.baseUrl}/by-guard/${guard}`);
+        const response = await apiClient.get(`${this.baseUrl}/by-guard/${guard}`);
         return response.data.data;
     }
 
@@ -146,7 +191,7 @@ class PermissionsApiService {
      * Get all available modules
      */
     async getModules(): Promise<string[]> {
-        const response = await axios.get(`${this.baseUrl}/modules`);
+        const response = await apiClient.get(`${this.baseUrl}/modules`);
         return response.data.data;
     }
 
@@ -154,7 +199,7 @@ class PermissionsApiService {
      * Get all available guards
      */
     async getGuards(): Promise<string[]> {
-        const response = await axios.get(`${this.baseUrl}/guards`);
+        const response = await apiClient.get(`${this.baseUrl}/guards`);
         return response.data.data;
     }
 }

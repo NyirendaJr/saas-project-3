@@ -1,6 +1,7 @@
+import { LaravelPagination } from '@/components/laravel-pagination';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TableBody, TableCell, TableHead, TableHeader, TableRow, Table as UITable } from '@/components/ui/table';
-import { permissionsApiService, type PaginationData, type PermissionFilters } from '@/services/permissionsApiService';
+import { permissionsApiService, type PaginationMeta, type PermissionFilters } from '@/services/permissionsApiService';
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -32,7 +33,8 @@ interface ApiDataTableProps<TData, TValue> {
     emptyMessage?: string;
     loadingRows?: number;
     initialFilters?: PermissionFilters;
-    onPaginationChange?: (pagination: PaginationData) => void;
+    onPaginationChange?: (pagination: PaginationMeta) => void;
+    showPagination?: boolean;
 }
 
 export function ApiDataTable<TData, TValue>({
@@ -43,15 +45,18 @@ export function ApiDataTable<TData, TValue>({
     loadingRows = 5,
     initialFilters = {},
     onPaginationChange,
+    showPagination = true,
 }: ApiDataTableProps<TData, TValue>) {
     const [data, setData] = useState<TData[]>([]);
-    const [pagination, setPagination] = useState<PaginationData>({
+    const [pagination, setPagination] = useState<PaginationMeta>({
         current_page: 1,
         last_page: 1,
-        per_page: 15,
+        per_page: 10,
         total: 0,
         from: 0,
         to: 0,
+        path: '',
+        links: [],
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -69,27 +74,26 @@ export function ApiDataTable<TData, TValue>({
                 setLoading(true);
                 setError(null);
 
-                // Convert table state to API filters
+                // Convert table state to API filters for Spatie Query Builder
                 const apiFilters: PermissionFilters = {
                     ...currentFilters,
                     page: currentFilters.page || 1,
-                    per_page: currentFilters.per_page || 15,
+                    per_page: currentFilters.per_page || 10,
                 };
 
-                // Add sorting if available
+                // Add sorting if available (Spatie uses 'sort' parameter)
                 if (sorting.length > 0) {
                     const sort = sorting[0];
-                    apiFilters.sort_by = sort.id;
-                    apiFilters.sort_order = sort.desc ? 'desc' : 'asc';
+                    apiFilters.sort = sort.desc ? `-${sort.id}` : sort.id;
                 }
 
-                // Add search if available
+                // Add global search if available
                 const searchFilter = columnFilters.find((f) => f.id === 'name');
                 if (searchFilter?.value) {
-                    apiFilters.search = searchFilter.value as string;
+                    apiFilters.global = searchFilter.value as string;
                 }
 
-                // Add other filters
+                // Add exact filters
                 const guardFilter = columnFilters.find((f) => f.id === 'guard_name');
                 if (guardFilter?.value) {
                     apiFilters.guard_name = guardFilter.value as string;
@@ -105,15 +109,17 @@ export function ApiDataTable<TData, TValue>({
                 // Ensure we have valid data and pagination
                 const validData = Array.isArray(response.data) ? response.data : [];
                 const validPagination =
-                    response.pagination && typeof response.pagination === 'object'
-                        ? response.pagination
+                    response.meta && typeof response.meta === 'object'
+                        ? response.meta
                         : {
                               current_page: 1,
                               last_page: 1,
-                              per_page: apiFilters.per_page || 15,
+                              per_page: apiFilters.per_page || 10,
                               total: 0,
                               from: 0,
                               to: 0,
+                              path: '',
+                              links: [],
                           };
 
                 setData(validData as TData[]);
@@ -132,24 +138,34 @@ export function ApiDataTable<TData, TValue>({
         [sorting, columnFilters],
     );
 
-    // Fetch data when filters, sorting, or column filters change
+    // Update filters when initialFilters prop changes (for external pagination control)
+    useEffect(() => {
+        setFilters(initialFilters);
+    }, [initialFilters]);
+
+    // Fetch data when filters change (for pagination)
     useEffect(() => {
         fetchData(filters);
-    }, [fetchData, filters]);
+    }, [filters]);
+
+    // Fetch data when sorting or column filters change
+    useEffect(() => {
+        fetchData(filters);
+    }, [fetchData]);
 
     // Update filters when table state changes
     useEffect(() => {
         const newFilters: PermissionFilters = { ...filters };
 
-        // Update search
+        // Update global search
         const searchFilter = columnFilters.find((f) => f.id === 'name');
         if (searchFilter?.value) {
-            newFilters.search = searchFilter.value as string;
+            newFilters.global = searchFilter.value as string;
         } else {
-            delete newFilters.search;
+            delete newFilters.global;
         }
 
-        // Update other filters
+        // Update exact filters
         const guardFilter = columnFilters.find((f) => f.id === 'guard_name');
         if (guardFilter?.value) {
             newFilters.guard_name = guardFilter.value as string;
@@ -164,14 +180,12 @@ export function ApiDataTable<TData, TValue>({
             delete newFilters.module;
         }
 
-        // Update sorting
+        // Update sorting (Spatie format)
         if (sorting.length > 0) {
             const sort = sorting[0];
-            newFilters.sort_by = sort.id;
-            newFilters.sort_order = sort.desc ? 'desc' : 'asc';
+            newFilters.sort = sort.desc ? `-${sort.id}` : sort.id;
         } else {
-            delete newFilters.sort_by;
-            delete newFilters.sort_order;
+            delete newFilters.sort;
         }
 
         setFilters(newFilters);
@@ -278,7 +292,15 @@ export function ApiDataTable<TData, TValue>({
                     </TableBody>
                 </UITable>
             </div>
-            {/* Pagination will be handled by the parent component */}
+            {showPagination && (
+                <LaravelPagination
+                    pagination={pagination}
+                    onPageChange={(page) => {
+                        const newFilters = { ...filters, page };
+                        setFilters(newFilters);
+                    }}
+                />
+            )}
         </div>
     );
 }

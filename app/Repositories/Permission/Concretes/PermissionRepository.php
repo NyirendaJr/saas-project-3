@@ -65,10 +65,11 @@ class PermissionRepository extends QueryableRepository implements PermissionRepo
     {
         return [
             AllowedFilter::exact('id'),
-            'name',
-            'guard_name',
-            'module',
-            'description',
+            AllowedFilter::partial('name'),
+            AllowedFilter::exact('guard_name'),
+            AllowedFilter::exact('module'),
+            AllowedFilter::partial('description'),
+            AllowedFilter::partial('display_name'),
         ];
     }
 
@@ -77,7 +78,7 @@ class PermissionRepository extends QueryableRepository implements PermissionRepo
      */
     public function getAllowedSorts(): array
     {
-        return ['id', 'name', 'guard_name', 'module', 'created_at', 'updated_at'];
+        return ['id', 'name', 'display_name', 'guard_name', 'module', 'description', 'created_at', 'updated_at'];
     }
 
     /**
@@ -93,6 +94,6 @@ class PermissionRepository extends QueryableRepository implements PermissionRepo
      */
     public function getAllowedFields(): array
     {
-        return ['id', 'name', 'guard_name', 'module', 'description', 'created_at', 'updated_at'];
+        return ['id', 'name', 'display_name', 'guard_name', 'module', 'description', 'created_at', 'updated_at'];
     }
 } 

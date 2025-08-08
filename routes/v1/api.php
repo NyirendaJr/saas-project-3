@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\PermissionController;
+use App\Http\Controllers\Api\V1\RoleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\BrandController;
 use App\Http\Controllers\Api\V1\ImportBrandController;
@@ -34,7 +35,7 @@ Route::name('auth.')
         });
     });
 
-// Permission routes
+// Permission routes - JWT authentication for API access
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('permissions/all', [PermissionController::class, 'all'])->name('permissions.all');
     Route::get('permissions/modules', [PermissionController::class, 'modules'])->name('permissions.modules');
@@ -43,6 +44,14 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('permissions/guard/{guard}', [PermissionController::class, 'byGuard'])->name('permissions.byGuard');
     Route::delete('permissions/multiple', [PermissionController::class, 'destroyMultiple'])->name('permissions.destroyMultiple');
     Route::apiResource('permissions', PermissionController::class)->names('permissions');
+});
+
+// Role routes - JWT authentication for API access
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::get('roles/guards', [RoleController::class, 'guards'])->name('roles.guards');
+    Route::get('roles/guard/{guard}', [RoleController::class, 'byGuard'])->name('roles.byGuard');
+    Route::delete('roles/multiple', [RoleController::class, 'destroyMultiple'])->name('roles.destroyMultiple');
+    Route::apiResource('roles', RoleController::class)->names('roles');
 });
 
 Route::group(['middleware' => 'auth:api'], function () {

@@ -16,42 +16,7 @@ class WebPermissionController extends Controller
 
     public function index(Request $request): Response
     {
-        $filters = $request->only([
-            'search',
-            'guard_name',
-            'module',
-            'sort_by',
-            'sort_order',
-            'per_page'
-        ]);
-
-        // Get the per_page from request, default to 15
-        $perPage = $request->input('per_page', 15);
-        $permissions = $this->permissionService->getFilteredPermissions($request, $perPage);
-
-        return Inertia::render('modules/settings/permissions/index', [
-            'module' => [
-                'id' => 'settings',
-                'name' => 'Settings',
-                'description' => 'System settings and configuration',
-                'icon' => 'IconSettings',
-                'route' => '/modules/settings',
-                'permissions' => [],
-                'isActive' => true,
-                'order' => 2,
-            ],
-            'userPermissions' => [], // TODO: Get actual user permissions
-            'permissions' => $permissions->items(),
-            'pagination' => [
-                'current_page' => $permissions->currentPage(),
-                'last_page' => $permissions->lastPage(),
-                'per_page' => $permissions->perPage(),
-                'total' => $permissions->total(),
-                'from' => $permissions->firstItem(),
-                'to' => $permissions->lastItem(),
-            ],
-            'filters' => $filters,
-        ]);
+        return Inertia::render('modules/settings/permissions/index');
     }
 
     public function store(Request $request): JsonResponse

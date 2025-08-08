@@ -36,62 +36,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $user = Auth::user();
-        $token = JWTAuth::fromUser($user);
-        
-        // Store token in cache for API access
-        Cache::put('jwt_token_' . $user->id, $token, now()->addDays(7));
-        
-        Log::info('JWT Token generated for user: ' . $user->id, ['token' => $token]);
-
         // Redirect to modules dashboard after successful login
         return redirect()->intended(route('modules.index', absolute: false));
-    }
-
-    /**
-     * Get JWT token for authenticated user (for frontend use)
-     */
-    public function getToken(Request $request): \Illuminate\Http\JsonResponse
-    {
-        if (!Auth::check()) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-
-        $user = Auth::user();
-        $token = Cache::get('jwt_token_' . $user->id);
-        
-        if (!$token) {
-            // Generate new token if not exists
-            $token = JWTAuth::fromUser($user);
-            Cache::put('jwt_token_' . $user->id, $token, now()->addDays(7));
-        }
-
-        return response()->json([
-            'token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => config('jwt.ttl') * 60, // Convert to seconds
-        ]);
-    }
-
-    /**
-     * Refresh JWT token
-     */
-    public function refreshToken(Request $request): \Illuminate\Http\JsonResponse
-    {
-        try {
-            $token = JWTAuth::refresh(JWTAuth::getToken());
-            
-            $user = Auth::user();
-            Cache::put('jwt_token_' . $user->id, $token, now()->addDays(7));
-            
-            return response()->json([
-                'token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => config('jwt.ttl') * 60,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Token refresh failed'], 401);
-        }
     }
 
     /**
@@ -100,8 +46,6 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
-        JWTAuth::invalidate(JWTAuth::getToken());
-        Cache::forget('jwt_token');
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

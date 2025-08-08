@@ -5,7 +5,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { FontProvider } from './context/font-context';
 import { initializeTheme } from './hooks/use-appearance';
-import JWTService from './services/jwtService';
+
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -28,7 +28,3 @@ createInertiaApp({
 
 // This will set light / dark mode on load...
 initializeTheme();
-
-// Initialize JWT service and setup axios interceptors
-const jwtService = JWTService.getInstance();
-jwtService.setupAxiosInterceptor();

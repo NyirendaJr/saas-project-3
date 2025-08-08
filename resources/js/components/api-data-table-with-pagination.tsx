@@ -1,44 +1,59 @@
-import { type PaginationData, type PermissionFilters } from '@/services/permissionsApiService';
+import { type PaginationMeta } from '@/services/permissionsApiService';
 import { useCallback, useState } from 'react';
 import { ApiDataTable } from './api-data-table';
 import { ApiPagination } from './api-pagination';
 
-interface ApiDataTableWithPaginationProps<TData, TValue> {
+interface ApiDataTableWithPaginationProps<TData, TValue, TFilters = any> {
     columns: any[];
     enableRowSelection?: boolean;
-    toolbar?: React.ReactElement;
+    toolbar?: React.ReactElement<{ table?: any }>;
     emptyMessage?: string;
     loadingRows?: number;
-    initialFilters?: PermissionFilters;
+    initialFilters?: TFilters;
 }
 
-export function ApiDataTableWithPagination<TData, TValue>({
+export function ApiDataTableWithPagination<TData, TValue, TFilters = any>({
     columns,
     enableRowSelection = true,
     toolbar,
     emptyMessage = 'No results.',
     loadingRows = 5,
-    initialFilters = {},
-}: ApiDataTableWithPaginationProps<TData, TValue>) {
-    const [pagination, setPagination] = useState<PaginationData>({
+    initialFilters,
+}: ApiDataTableWithPaginationProps<TData, TValue, TFilters>) {
+    const [pagination, setPagination] = useState<PaginationMeta>({
         current_page: 1,
         last_page: 1,
-        per_page: 15,
+        per_page: 10,
         total: 0,
         from: 0,
         to: 0,
+        path: '',
+        links: [],
     });
     const [loading, setLoading] = useState(false);
+    const [currentFilters, setCurrentFilters] = useState<TFilters>({
+        ...initialFilters,
+        page: 1,
+        per_page: 10,
+    } as TFilters & { page: number; per_page: number });
 
     const handlePageChange = useCallback((page: number) => {
+        setLoading(true);
+        setCurrentFilters((prev) => ({ ...prev, page }));
         setPagination((prev) => ({ ...prev, current_page: page }));
     }, []);
 
     const handlePageSizeChange = useCallback((pageSize: number) => {
+        setLoading(true);
+        setCurrentFilters((prev) => ({
+            ...prev,
+            per_page: pageSize,
+            page: 1, // Reset to first page when changing page size
+        }));
         setPagination((prev) => ({
             ...prev,
             per_page: pageSize,
-            current_page: 1, // Reset to first page when changing page size
+            current_page: 1,
         }));
     }, []);
 
@@ -50,14 +65,12 @@ export function ApiDataTableWithPagination<TData, TValue>({
                 toolbar={toolbar}
                 emptyMessage={emptyMessage}
                 loadingRows={loadingRows}
-                initialFilters={{
-                    ...initialFilters,
-                    page: pagination.current_page,
-                    per_page: pagination.per_page,
-                }}
+                showPagination={false}
+                initialFilters={currentFilters}
                 onPaginationChange={(newPagination) => {
                     if (newPagination && typeof newPagination === 'object') {
                         setPagination(newPagination);
+                        setLoading(false);
                     }
                 }}
             />

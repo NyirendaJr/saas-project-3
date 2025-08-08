@@ -9,10 +9,6 @@ import PermissionsProvider from './context/permissions-context';
 
 interface PermissionsModuleProps {
     module?: Module;
-    userPermissions?: string[];
-    permissions?: any[];
-    filters?: any;
-    pagination?: any;
     flash?: {
         success?: string;
         error?: string;
@@ -21,10 +17,6 @@ interface PermissionsModuleProps {
 
 export default function PermissionsModule({
     module,
-    userPermissions = [],
-    permissions = [],
-    filters = {},
-    pagination = {},
     flash,
 }: PermissionsModuleProps) {
     const sidebarData = getModuleSidebar('settings');

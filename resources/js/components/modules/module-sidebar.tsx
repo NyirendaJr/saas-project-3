@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/sidebar';
 import { useFont } from '@/context/font-context';
 import { type ModuleSidebarData } from '@/types/modules';
+import { isItemActive } from '@/utils/route-helper';
 import { Link, usePage } from '@inertiajs/react';
 import { IconSettings, IconShoppingCart } from '@tabler/icons-react';
 import { ChevronsUpDown } from 'lucide-react';
@@ -124,15 +125,12 @@ const NavBadge = ({ children }: { children: ReactNode }) => <Badge className="ro
 
 const SidebarMenuLink = ({ item }: { item: any }) => {
     const { setOpenMobile } = useSidebar();
-    const { url } = usePage();
-    const isActive = checkIsActive(url, item);
-
-    // Use the actual active state
-    const debugIsActive = isActive;
+    const { url, component } = usePage();
+    const isActive = isItemActive(item, url, component);
 
     return (
         <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={debugIsActive} tooltip={item.title}>
+            <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
                 <Link href={item.url} onClick={() => setOpenMobile(false)}>
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
@@ -142,31 +140,3 @@ const SidebarMenuLink = ({ item }: { item: any }) => {
         </SidebarMenuItem>
     );
 };
-
-function checkIsActive(href: string, item: any) {
-    // Remove query parameters for comparison
-    const cleanHref = href.split('?')[0];
-    const cleanItemUrl = item.url.split('?')[0];
-
-    // Exact match
-    if (cleanHref === cleanItemUrl) {
-        return true;
-    }
-
-    // For sub-pages, check if the current URL starts with the item URL
-    // This handles cases like /modules/settings/permissions matching /modules/settings/permissions
-    if (cleanHref.startsWith(cleanItemUrl + '/')) {
-        return true;
-    }
-
-    // For module navigation, check if we're in the same module section
-    const currentPath = cleanHref.split('/');
-    const itemPath = cleanItemUrl.split('/');
-
-    // Check if we're in the same module (e.g., /modules/sales/... matches /modules/sales)
-    if (currentPath.length >= 3 && itemPath.length >= 3) {
-        return currentPath[1] === itemPath[1] && currentPath[2] === itemPath[2];
-    }
-
-    return false;
-}

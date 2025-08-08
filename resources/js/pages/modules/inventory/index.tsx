@@ -10,6 +10,7 @@ interface SalesModuleProps {
 
 export default function SalesModule({ module, userPermissions }: SalesModuleProps) {
     const sidebarData = getModuleSidebar('sales');
+    console.log(module)
 
     if (!sidebarData) {
         return (

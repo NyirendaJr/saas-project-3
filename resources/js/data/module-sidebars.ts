@@ -39,14 +39,14 @@ export const moduleSidebars: Record<string, ModuleSidebarData> = {
                 title: 'General Settings',
                 items: [
                     {
-                        title: 'Roles',
-                        url: '/modules/settings/roles',
-                        icon: IconSettings,
-                    },
-                    {
                         title: 'Permissions',
                         url: '/modules/settings/permissions',
                         icon: IconKey,
+                    },
+                    {
+                        title: 'Roles',
+                        url: '/modules/settings/roles',
+                        icon: IconSettings,
                     },
                 ],
             },
@@ -55,6 +55,5 @@ export const moduleSidebars: Record<string, ModuleSidebarData> = {
 };
 
 export const getModuleSidebar = (moduleId: string): ModuleSidebarData | undefined => {
-    console.log('getModuleSidebar - moduleId:', moduleId);
     return moduleSidebars[moduleId];
 };

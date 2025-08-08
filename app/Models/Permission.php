@@ -17,6 +17,16 @@ class Permission extends SpatiePermission
         'description',
     ];
 
+    /**
+     * Fields that can be searched globally
+     */
+    public array $searchable = [
+        'name',
+        'display_name',
+        'module',
+        'description',
+    ];
+
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
