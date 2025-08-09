@@ -6,6 +6,15 @@ export { DataTablePagination } from './data-table-pagination';
 export { DataTableToolbar } from './data-table-toolbar';
 export { DataTableViewOptions } from './data-table-view-options';
 
+// Server-side DataTable components
+export { ServerSideDataTable } from './server-side-data-table';
+export { ServerSidePagination } from './server-side-pagination';
+
+// API-based DataTable components
+export { ApiDataTable } from './api-data-table';
+export { ApiDataTableWithPagination } from './api-data-table-with-pagination';
+export { ApiPagination } from './api-pagination';
+
 // Layout components
 export { PageLayout } from './layout/page-layout';
 

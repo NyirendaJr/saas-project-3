@@ -10,6 +10,8 @@ import {
     SidebarMenuSubItem,
     useSidebar,
 } from '@/components/ui/sidebar';
+
+import { isItemActive } from '@/utils/route-helper';
 import { Link, usePage } from '@inertiajs/react';
 import { ChevronRight } from 'lucide-react';
 import { ReactNode } from 'react';
@@ -22,23 +24,25 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { NavCollapsible, NavItem, NavLink, type NavGroup } from './types';
+import { NavCollapsible, NavLink, type NavGroup } from './types';
 
 export function NavGroup({ title, items }: NavGroup) {
     const { state, isMobile } = useSidebar();
-    const { url } = usePage();
+    const { url, component } = usePage();
+
     return (
         <SidebarGroup>
             <SidebarGroupLabel>{title}</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item) => {
-                    const key = `${item.title}-${item.url}`;
+                    const key = `${item.title}-${item.url || 'collapsible'}`;
 
-                    if (!item.items) return <SidebarMenuLink key={key} item={item} href={url} />;
+                    if (!item.items) return <SidebarMenuLink key={key} item={item} url={url} component={component} />;
 
-                    if (state === 'collapsed' && !isMobile) return <SidebarMenuCollapsedDropdown key={key} item={item} href={url} />;
+                    if (state === 'collapsed' && !isMobile)
+                        return <SidebarMenuCollapsedDropdown key={key} item={item} url={url} component={component} />;
 
-                    return <SidebarMenuCollapsible key={key} item={item} href={url} />;
+                    return <SidebarMenuCollapsible key={key} item={item} url={url} component={component} />;
                 })}
             </SidebarMenu>
         </SidebarGroup>
@@ -47,11 +51,15 @@ export function NavGroup({ title, items }: NavGroup) {
 
 const NavBadge = ({ children }: { children: ReactNode }) => <Badge className="rounded-full px-1 py-0 text-xs">{children}</Badge>;
 
-const SidebarMenuLink = ({ item, href }: { item: NavLink; href: string }) => {
+const SidebarMenuLink = ({ item, url, component }: { item: NavLink; url: string; component: string }) => {
     const { setOpenMobile } = useSidebar();
+
+    // Check if this item is active using Inertia.js patterns
+    const isActive = isItemActive(item, url, component);
+
     return (
         <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={checkIsActive(href, item)} tooltip={item.title}>
+            <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
                 <Link href={item.url} onClick={() => setOpenMobile(false)}>
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
@@ -62,10 +70,14 @@ const SidebarMenuLink = ({ item, href }: { item: NavLink; href: string }) => {
     );
 };
 
-const SidebarMenuCollapsible = ({ item, href }: { item: NavCollapsible; href: string }) => {
+const SidebarMenuCollapsible = ({ item, url, component }: { item: NavCollapsible; url: string; component: string }) => {
     const { setOpenMobile } = useSidebar();
+
+    // Check if any child item is active
+    const hasActiveChild = item.items.some((subItem) => isItemActive(subItem, url, component));
+
     return (
-        <Collapsible asChild defaultOpen={checkIsActive(href, item, true)} className="group/collapsible">
+        <Collapsible asChild defaultOpen={hasActiveChild} className="group/collapsible">
             <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
                     <SidebarMenuButton tooltip={item.title}>
@@ -79,7 +91,7 @@ const SidebarMenuCollapsible = ({ item, href }: { item: NavCollapsible; href: st
                     <SidebarMenuSub>
                         {item.items.map((subItem) => (
                             <SidebarMenuSubItem key={subItem.title}>
-                                <SidebarMenuSubButton asChild isActive={checkIsActive(href, subItem)}>
+                                <SidebarMenuSubButton asChild isActive={isItemActive(subItem, url, component)}>
                                     <Link href={subItem.url} onClick={() => setOpenMobile(false)}>
                                         {subItem.icon && <subItem.icon />}
                                         <span>{subItem.title}</span>
@@ -95,12 +107,15 @@ const SidebarMenuCollapsible = ({ item, href }: { item: NavCollapsible; href: st
     );
 };
 
-const SidebarMenuCollapsedDropdown = ({ item, href }: { item: NavCollapsible; href: string }) => {
+const SidebarMenuCollapsedDropdown = ({ item, url, component }: { item: NavCollapsible; url: string; component: string }) => {
+    // Check if any child item is active
+    const hasActiveChild = item.items.some((subItem) => isItemActive(subItem, url, component));
+
     return (
         <SidebarMenuItem>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title} isActive={checkIsActive(href, item)}>
+                    <SidebarMenuButton tooltip={item.title} isActive={hasActiveChild}>
                         {item.icon && <item.icon />}
                         <span>{item.title}</span>
                         {item.badge && <NavBadge>{item.badge}</NavBadge>}
@@ -114,7 +129,7 @@ const SidebarMenuCollapsedDropdown = ({ item, href }: { item: NavCollapsible; hr
                     <DropdownMenuSeparator />
                     {item.items.map((sub) => (
                         <DropdownMenuItem key={`${sub.title}-${sub.url}`} asChild>
-                            <Link href={sub.url} className={`${checkIsActive(href, sub) ? 'bg-secondary' : ''}`}>
+                            <Link href={sub.url} className={`${isItemActive(sub, url, component) ? 'bg-secondary' : ''}`}>
                                 {sub.icon && <sub.icon />}
                                 <span className="max-w-52 text-wrap">{sub.title}</span>
                                 {sub.badge && <span className="ml-auto text-xs">{sub.badge}</span>}
@@ -126,12 +141,3 @@ const SidebarMenuCollapsedDropdown = ({ item, href }: { item: NavCollapsible; hr
         </SidebarMenuItem>
     );
 };
-
-function checkIsActive(href: string, item: NavItem, mainNav = false) {
-    return (
-        href === item.url || // /endpint?search=param
-        href.split('?')[0] === item.url || // endpoint
-        !!item?.items?.filter((i) => i.url === href).length || // if child nav is active
-        (mainNav && href.split('/')[1] !== '' && href.split('/')[1] === item?.url?.split('/')[1])
-    );
-}
