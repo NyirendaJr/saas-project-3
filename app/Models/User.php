@@ -12,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
@@ -22,7 +23,6 @@ class User extends Authenticatable implements JWTSubject
     use HasFactory;
     use HasApiTokens;
     use Notifiable;
-    use HasUuids;
     use HasRoles;
 
     /**
@@ -34,6 +34,9 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'company_id',
+        'current_store_id',
+        'store_permissions',
     ];
 
     /**
@@ -56,6 +59,7 @@ class User extends Authenticatable implements JWTSubject
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'store_permissions' => 'array',
         ];
     }
 
@@ -77,13 +81,88 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    // public function warehouses(): BelongsToMany
-    // {
-    //     return $this->belongsToMany(Warehouse::class);
-    // }
+    /**
+     * Get the company that the user belongs to
+     */
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
 
-    // public function company()
-    // {
-    //     return $this->belongsTo(Company::class);
-    // }
+    /**
+     * Get the current store the user is working in
+     */
+    public function currentStore(): BelongsTo
+    {
+        return $this->belongsTo(Store::class, 'current_store_id');
+    }
+
+    /**
+     * Get all stores the user has access to
+     */
+    public function stores(): BelongsToMany
+    {
+        return $this->belongsToMany(Store::class, 'user_stores')
+                    ->withPivot(['permissions', 'is_active'])
+                    ->withTimestamps();
+    }
+
+    /**
+     * Get active stores the user has access to
+     */
+    public function activeStores(): BelongsToMany
+    {
+        return $this->stores()->wherePivot('is_active', true);
+    }
+
+    /**
+     * Check if user has access to a specific store
+     */
+    public function hasAccessToStore(Store $store): bool
+    {
+        return $this->stores()->where('stores.id', $store->id)->exists();
+    }
+
+    /**
+     * Switch to a different store
+     */
+    public function switchToStore(Store $store): bool
+    {
+        if (!$this->hasAccessToStore($store)) {
+            return false;
+        }
+
+        $this->update(['current_store_id' => $store->id]);
+        return true;
+    }
+
+    /**
+     * Get user's permissions for current store
+     */
+    public function getCurrentStorePermissions(): array
+    {
+        if (!$this->currentStore) {
+            return [];
+        }
+
+        $userStore = $this->stores()->where('stores.id', $this->currentStore->id)->first();
+        return $userStore?->pivot?->permissions ?? [];
+    }
+
+    /**
+     * Check if user has permission in current store
+     */
+    public function hasStorePermission(string $permission): bool
+    {
+        $permissions = $this->getCurrentStorePermissions();
+        return in_array($permission, $permissions);
+    }
+
+    /**
+     * Scope to filter users by company
+     */
+    public function scopeForCompany($query, $companyId)
+    {
+        return $query->where('company_id', $companyId);
+    }
 }

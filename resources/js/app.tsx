@@ -4,9 +4,10 @@ import './assets/index.css';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
+import { Toaster } from 'sonner';
 import { FontProvider } from './context/font-context';
+import { StoreProvider } from './context/store-context';
 import { initializeTheme } from './hooks/use-appearance';
-
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -18,7 +19,10 @@ createInertiaApp({
 
         root.render(
             <FontProvider>
-                <App {...props} />
+                <StoreProvider>
+                    <App {...props} />
+                    <Toaster />
+                </StoreProvider>
             </FontProvider>,
         );
     },
