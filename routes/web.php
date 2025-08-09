@@ -9,6 +9,10 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
+Route::get('/color-demo', function () {
+    return Inertia::render('color-demo');
+})->name('color-demo');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/modules', [ModulesController::class, 'index'])->name('modules.index');
     

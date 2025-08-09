@@ -1,9 +1,9 @@
-import { type PaginationMeta } from '@/services/permissionsApiService';
+import { type PaginationMeta, type PermissionFilters } from '@/services/permissionsApiService';
 import { useCallback, useState } from 'react';
 import { ApiDataTable } from './api-data-table';
 import { ApiPagination } from './api-pagination';
 
-interface ApiDataTableWithPaginationProps<TData, TValue, TFilters = any> {
+interface ApiDataTableWithPaginationProps<TData, TValue, TFilters extends PermissionFilters = PermissionFilters> {
     columns: any[];
     enableRowSelection?: boolean;
     toolbar?: React.ReactElement<{ table?: any }>;
@@ -12,7 +12,7 @@ interface ApiDataTableWithPaginationProps<TData, TValue, TFilters = any> {
     initialFilters?: TFilters;
 }
 
-export function ApiDataTableWithPagination<TData, TValue, TFilters = any>({
+export function ApiDataTableWithPagination<TData, TValue, TFilters extends PermissionFilters = PermissionFilters>({
     columns,
     enableRowSelection = true,
     toolbar,

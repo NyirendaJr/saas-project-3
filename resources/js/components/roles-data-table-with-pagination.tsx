@@ -27,6 +27,8 @@ export function RolesDataTableWithPagination<TData, TValue>({
         total: 0,
         from: 0,
         to: 0,
+        path: '',
+        links: [],
     });
     const [loading, setLoading] = useState(false);
     const [currentFilters, setCurrentFilters] = useState<RoleFilters>({

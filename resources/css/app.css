@@ -39,6 +39,15 @@
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
 
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+
+    --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
+
+    --color-info: var(--info);
+    --color-info-foreground: var(--info-foreground);
+
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);
@@ -60,74 +69,122 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.87 0 0);
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.87 0 0);
+    /* Main Layout Colors */
+    --background: oklch(0.99 0 0); /* Soft white for main background */
+    --foreground: oklch(0.15 0 0); /* Dark slate for primary text */
+    --card: oklch(1 0 0); /* Pure white for cards */
+    --card-foreground: oklch(0.15 0 0); /* Dark text on cards */
+    --popover: oklch(1 0 0); /* White popover background */
+    --popover-foreground: oklch(0.15 0 0); /* Dark popover text */
+
+    /* Primary Brand Colors - Professional Blue */
+    --primary: oklch(0.65 0.17 258); /* Trustworthy blue */
+    --primary-foreground: oklch(0.98 0 0); /* White text on primary */
+
+    /* Secondary Colors - Clean Gray */
+    --secondary: oklch(0.96 0.01 258); /* Light blue-gray */
+    --secondary-foreground: oklch(0.3 0.02 258); /* Dark blue-gray text */
+
+    /* Muted Colors for Subtle Elements */
+    --muted: oklch(0.95 0.01 258); /* Very light blue-gray */
+    --muted-foreground: oklch(0.55 0.02 258); /* Medium gray text */
+
+    /* Accent Colors - Action Elements */
+    --accent: oklch(0.92 0.02 258); /* Subtle accent background */
+    --accent-foreground: oklch(0.25 0.02 258); /* Dark accent text */
+
+    /* Status Colors */
+    --destructive: oklch(0.65 0.2 25); /* Professional red for errors */
+    --destructive-foreground: oklch(0.98 0 0); /* White text on red */
+    --success: oklch(0.6 0.15 145); /* Professional green for success */
+    --success-foreground: oklch(0.98 0 0); /* White text on green */
+    --warning: oklch(0.75 0.15 75); /* Professional amber for warnings */
+    --warning-foreground: oklch(0.15 0 0); /* Dark text on amber */
+    --info: oklch(0.7 0.15 230); /* Professional blue for info */
+    --info-foreground: oklch(0.98 0 0); /* White text on info blue */
+
+    /* Border and Input Colors */
+    --border: oklch(0.9 0.01 258); /* Subtle borders */
+    --input: oklch(0.95 0.01 258); /* Input background */
+    --ring: oklch(0.65 0.17 258); /* Focus ring color (matches primary) */
+
+    /* Chart Colors - Professional Palette */
+    --chart-1: oklch(0.65 0.17 258); /* Primary blue */
+    --chart-2: oklch(0.6 0.15 145); /* Success green */
+    --chart-3: oklch(0.7 0.15 310); /* Purple accent */
+    --chart-4: oklch(0.75 0.15 75); /* Warning amber */
+    --chart-5: oklch(0.7 0.15 20); /* Orange accent */
+
+    /* Border Radius */
+    --radius: 0.5rem; /* Slightly more conservative radius */
+
+    /* Sidebar Colors - Slightly Darker for Contrast */
+    --sidebar: oklch(0.97 0.01 258); /* Light sidebar background */
+    --sidebar-foreground: oklch(0.2 0.02 258); /* Dark sidebar text */
+    --sidebar-primary: oklch(0.65 0.17 258); /* Primary blue for active items */
+    --sidebar-primary-foreground: oklch(0.98 0 0); /* White text on active */
+    --sidebar-accent: oklch(0.92 0.02 258); /* Subtle hover state */
+    --sidebar-accent-foreground: oklch(0.25 0.02 258); /* Dark text on hover */
+    --sidebar-border: oklch(0.88 0.01 258); /* Subtle sidebar borders */
+    --sidebar-ring: oklch(0.65 0.17 258); /* Focus ring in sidebar */
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.145 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.145 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.985 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.396 0.141 25.723);
-    --destructive-foreground: oklch(0.637 0.237 25.331);
-    --border: oklch(0.269 0 0);
-    --input: oklch(0.269 0 0);
-    --ring: oklch(0.439 0 0);
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.985 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(0.269 0 0);
-    --sidebar-ring: oklch(0.439 0 0);
+    /* Main Layout Colors - Dark Theme */
+    --background: oklch(0.08 0.01 258); /* Very dark blue-gray background */
+    --foreground: oklch(0.95 0 0); /* Almost white text */
+    --card: oklch(0.12 0.01 258); /* Slightly lighter cards */
+    --card-foreground: oklch(0.95 0 0); /* Light text on cards */
+    --popover: oklch(0.1 0.01 258); /* Dark popover background */
+    --popover-foreground: oklch(0.95 0 0); /* Light popover text */
+
+    /* Primary Brand Colors - Brighter for Dark */
+    --primary: oklch(0.7 0.2 258); /* Brighter blue for dark mode */
+    --primary-foreground: oklch(0.05 0 0); /* Very dark text on primary */
+
+    /* Secondary Colors - Dark Gray */
+    --secondary: oklch(0.18 0.01 258); /* Dark blue-gray */
+    --secondary-foreground: oklch(0.85 0 0); /* Light text */
+
+    /* Muted Colors for Subtle Elements */
+    --muted: oklch(0.15 0.01 258); /* Dark muted background */
+    --muted-foreground: oklch(0.65 0.01 258); /* Medium light text */
+
+    /* Accent Colors - Action Elements */
+    --accent: oklch(0.2 0.02 258); /* Dark accent background */
+    --accent-foreground: oklch(0.9 0 0); /* Light accent text */
+
+    /* Status Colors - Adjusted for Dark */
+    --destructive: oklch(0.6 0.2 25); /* Red for errors */
+    --destructive-foreground: oklch(0.95 0 0); /* Light text on red */
+    --success: oklch(0.65 0.15 145); /* Green for success */
+    --success-foreground: oklch(0.05 0 0); /* Dark text on green */
+    --warning: oklch(0.7 0.15 75); /* Amber for warnings */
+    --warning-foreground: oklch(0.05 0 0); /* Dark text on amber */
+    --info: oklch(0.65 0.15 230); /* Blue for info */
+    --info-foreground: oklch(0.95 0 0); /* Light text on info */
+
+    /* Border and Input Colors */
+    --border: oklch(0.25 0.01 258); /* Subtle dark borders */
+    --input: oklch(0.15 0.01 258); /* Dark input background */
+    --ring: oklch(0.7 0.2 258); /* Bright focus ring */
+
+    /* Chart Colors - Vibrant for Dark Mode */
+    --chart-1: oklch(0.7 0.2 258); /* Bright blue */
+    --chart-2: oklch(0.65 0.15 145); /* Bright green */
+    --chart-3: oklch(0.75 0.15 310); /* Bright purple */
+    --chart-4: oklch(0.7 0.15 75); /* Bright amber */
+    --chart-5: oklch(0.75 0.15 20); /* Bright orange */
+
+    /* Sidebar Colors - Professional Dark */
+    --sidebar: oklch(0.06 0.01 258); /* Very dark sidebar */
+    --sidebar-foreground: oklch(0.9 0 0); /* Light sidebar text */
+    --sidebar-primary: oklch(0.7 0.2 258); /* Bright blue for active */
+    --sidebar-primary-foreground: oklch(0.05 0 0); /* Dark text on active */
+    --sidebar-accent: oklch(0.15 0.01 258); /* Dark hover state */
+    --sidebar-accent-foreground: oklch(0.85 0 0); /* Light text on hover */
+    --sidebar-border: oklch(0.2 0.01 258); /* Dark sidebar borders */
+    --sidebar-ring: oklch(0.7 0.2 258); /* Bright focus ring */
 }
 
 @layer base {
@@ -159,4 +216,84 @@
         'Helvetica Neue',
         Arial,
         sans-serif;
+}
+
+/* Inventory System Utility Classes */
+@layer components {
+    /* Status Badge Variants */
+    .badge-success {
+        @apply bg-success text-success-foreground;
+    }
+
+    .badge-warning {
+        @apply bg-warning text-warning-foreground;
+    }
+
+    .badge-info {
+        @apply bg-info text-info-foreground;
+    }
+
+    .badge-destructive {
+        @apply bg-destructive text-destructive-foreground;
+    }
+
+    /* Inventory Status Colors */
+    .status-in-stock {
+        @apply border border-success/20 bg-success/10 text-success-foreground;
+    }
+
+    .status-low-stock {
+        @apply border border-warning/20 bg-warning/10 text-warning-foreground;
+    }
+
+    .status-out-of-stock {
+        @apply border border-destructive/20 bg-destructive/10 text-destructive-foreground;
+    }
+
+    .status-pending {
+        @apply border border-info/20 bg-info/10 text-info-foreground;
+    }
+
+    /* Action Button Variants */
+    .btn-success {
+        @apply bg-success text-success-foreground hover:bg-success/90 focus:ring-success/20;
+    }
+
+    .btn-warning {
+        @apply bg-warning text-warning-foreground hover:bg-warning/90 focus:ring-warning/20;
+    }
+
+    .btn-info {
+        @apply bg-info text-info-foreground hover:bg-info/90 focus:ring-info/20;
+    }
+
+    /* Data Table Enhancements */
+    .table-row-hover {
+        @apply transition-colors hover:bg-muted/50;
+    }
+
+    .table-cell-numeric {
+        @apply text-right font-mono;
+    }
+
+    .table-cell-status {
+        @apply font-medium;
+    }
+
+    /* Card Variants for Dashboard */
+    .card-metric {
+        @apply rounded-lg border border-border bg-card p-6 shadow-sm;
+    }
+
+    .card-metric-positive {
+        @apply border-l-4 border-l-success;
+    }
+
+    .card-metric-negative {
+        @apply border-l-4 border-l-destructive;
+    }
+
+    .card-metric-neutral {
+        @apply border-l-4 border-l-info;
+    }
 }

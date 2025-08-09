@@ -37,7 +37,7 @@ export function FontProvider({ children }: { children: React.ReactNode }) {
         document.documentElement.classList.add(`font-${currentFont}`);
     }, [currentFont]);
 
-    return <FontContext.Provider value={{ currentFont, setFont, availableFonts: fonts }}>{children}</FontContext.Provider>;
+    return <FontContext.Provider value={{ currentFont, setFont, availableFonts: [...fonts] }}>{children}</FontContext.Provider>;
 }
 
 export function useFont() {

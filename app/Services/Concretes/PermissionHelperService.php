@@ -17,7 +17,6 @@ class PermissionHelperService implements PermissionHelperServiceInterface
         $roleNames = $user->getRoleNames()->toArray();
         
         return [
-            // Basic user info
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -282,7 +281,7 @@ class PermissionHelperService implements PermissionHelperServiceInterface
      */
     public function isSuperAdmin($user): bool
     {
-        return $user->hasRole('superadmin') || $user->hasPermissionTo('*');
+        return $user->hasRole('superadmin');
     }
 
     /**
@@ -356,6 +355,6 @@ class PermissionHelperService implements PermissionHelperServiceInterface
         $user = Auth::user();
         return $user->can("{$module}_view") || 
                $user->can("{$module}_manage") || 
-               $user->hasRole('super_admin');
+               $user->hasRole('superadmin');
     }
 }
