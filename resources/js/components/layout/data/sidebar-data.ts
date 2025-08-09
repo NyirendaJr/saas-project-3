@@ -51,14 +51,9 @@ export const sidebarData: SidebarData = {
             title: 'General',
             items: [
                 {
-                    title: 'Dashboard',
-                    url: route('dashboard'),
+                    title: 'Modules',
+                    url: route('modules.index'),
                     icon: IconLayoutDashboard,
-                },
-                {
-                    title: 'Tasks',
-                    url: route('tasks.index'),
-                    icon: IconChecklist,
                 },
                 {
                     title: 'Apps',
@@ -70,11 +65,6 @@ export const sidebarData: SidebarData = {
                     url: '/chats',
                     badge: '3',
                     icon: IconMessages,
-                },
-                {
-                    title: 'Users',
-                    url: route('users.index'),
-                    icon: IconUsers,
                 },
                 {
                     title: 'Secured by Clerk',

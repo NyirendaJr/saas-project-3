@@ -1,9 +1,11 @@
+import AppearanceToggleDropdown from '@/components/appearance-dropdown';
+import { FontSwitcher } from '@/components/font-switcher';
 import { Header } from '@/components/layout/header';
 import { Main } from '@/components/layout/main';
 import { ProfileDropdown } from '@/components/profile-dropdown';
 import { Search } from '@/components/search';
-import { ThemeSwitch } from '@/components/theme-switch';
 import { AuthenticatedLayout } from '@/layouts/app-layout';
+import { type Module, type ModuleSidebarData } from '@/types/modules';
 import React from 'react';
 
 interface PageLayoutProps {
@@ -14,15 +16,28 @@ interface PageLayoutProps {
     dialogs?: React.ReactNode;
     headerFixed?: boolean;
     showSearch?: boolean;
+    module?: Module;
+    sidebarData?: ModuleSidebarData;
 }
 
-export function PageLayout({ children, title, description, primaryButtons, dialogs, headerFixed = true, showSearch = true }: PageLayoutProps) {
+export function PageLayout({
+    children,
+    title,
+    description,
+    primaryButtons,
+    dialogs,
+    headerFixed = true,
+    showSearch = true,
+    module,
+    sidebarData,
+}: PageLayoutProps) {
     return (
-        <AuthenticatedLayout>
+        <AuthenticatedLayout module={module} sidebarData={sidebarData}>
             <Header fixed={headerFixed}>
                 {showSearch && <Search />}
                 <div className="ml-auto flex items-center space-x-4">
-                    <ThemeSwitch />
+                    <FontSwitcher />
+                    <AppearanceToggleDropdown />
                     <ProfileDropdown />
                 </div>
             </Header>
@@ -35,7 +50,7 @@ export function PageLayout({ children, title, description, primaryButtons, dialo
                     </div>
                     {primaryButtons}
                 </div>
-                <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">{children}</div>
+                <div className="-mx-4 flex-1 px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">{children}</div>
             </Main>
 
             {dialogs}
