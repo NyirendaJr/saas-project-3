@@ -54,6 +54,8 @@ export function RolesDataTable<TData, TValue>({
         total: 0,
         from: 0,
         to: 0,
+        path: '',
+        links: [],
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -110,6 +112,8 @@ export function RolesDataTable<TData, TValue>({
                               total: 0,
                               from: 0,
                               to: 0,
+                              path: '',
+                              links: [],
                           };
 
                 setData(validData as TData[]);

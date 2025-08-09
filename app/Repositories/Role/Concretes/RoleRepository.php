@@ -2,65 +2,80 @@
 
 namespace App\Repositories\Role\Concretes;
 
+use App\Repositories\Base\Concretes\QueryableRepository;
 use App\Repositories\Role\Contracts\RoleRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\Permission\Models\Role;
+use Spatie\QueryBuilder\AllowedFilter;
 
-class RoleRepository implements RoleRepositoryInterface
+class RoleRepository extends QueryableRepository implements RoleRepositoryInterface
 {
-    protected Role $model;
-
-    public function __construct()
+    /**
+     * Specify Model class name
+     */
+    protected function model(): string
     {
-        $this->model = new Role();
+        return Role::class;
     }
 
-    public function getModel(): Role
+    /**
+     * Get roles by guard
+     */
+    public function getByGuard(string $guard): Collection
     {
-        return $this->model;
+        return $this->model->where('guard_name', $guard)->get();
     }
 
-    public function all(array $columns = ['*']): Collection
+    /**
+     * Get all available guards
+     */
+    public function getGuards(): array
     {
-        return $this->model->all($columns);
+        return $this->model->distinct()->pluck('guard_name')->toArray();
     }
 
-    public function paginate(int|string $perPage = 15, array $columns = ['*']): LengthAwarePaginator
+    /**
+     * Delete multiple roles
+     */
+    public function deleteMultiple(array $ids): int
     {
-        return $this->model->paginate($perPage, $columns);
+        return $this->model->whereIn('id', $ids)->delete();
     }
 
-    public function find(int|string $id, array $columns = ['*']): ?Role
+    /**
+     * Get allowed filters for this repository.
+     */
+    public function getAllowedFilters(): array
     {
-        return $this->model->find($id, $columns);
+        return [
+            AllowedFilter::exact('id'),
+            AllowedFilter::partial('name'),
+            AllowedFilter::exact('guard_name'),
+            AllowedFilter::partial('description'),
+        ];
     }
 
-    public function findByField(string $field, mixed $value, array $columns = ['*']): ?Role
+    /**
+     * Get allowed sorts for this repository.
+     */
+    public function getAllowedSorts(): array
     {
-        return $this->model->where($field, $value)->first($columns);
+        return ['id', 'name', 'guard_name', 'description', 'created_at', 'updated_at'];
     }
 
-    public function findOrFail(int|string $id, array $columns = ['*']): Role
+    /**
+     * Get allowed includes for this repository.
+     */
+    public function getAllowedIncludes(): array
     {
-        return $this->model->findOrFail($id, $columns);
+        return ['permissions'];
     }
 
-    public function create(array $data): Role
+    /**
+     * Get allowed fields for this repository.
+     */
+    public function getAllowedFields(): array
     {
-        return $this->model->create($data);
-    }
-
-    public function update(int|string $id, array $data): Role
-    {
-        $model = $this->findOrFail($id);
-        $model->update($data);
-        return $model->fresh();
-    }
-
-    public function delete(int|string $id): bool
-    {
-        $model = $this->findOrFail($id);
-        return $model->delete();
+        return ['id', 'name', 'guard_name', 'description', 'created_at', 'updated_at'];
     }
 }

@@ -15,7 +15,7 @@ export function PermissionsPrimaryButtons() {
                 '/permissions/sync',
                 {},
                 {
-                    onSuccess: (page) => {
+                    onSuccess: (page: any) => {
                         // Check for flash messages
                         if (page.props.flash?.success) {
                             setSuccessMessage(page.props.flash.success);

@@ -10,19 +10,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { type Permission } from '@/services/permissionsApiService';
 import { type ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal, Shield } from 'lucide-react';
-
-export interface Permission {
-    id: number;
-    display_name: string;
-    guard_name: string;
-    module: string;
-    description: string;
-    created_at: string;
-    updated_at: string;
-    roles_count: number;
-}
 
 export const columns: ColumnDef<Permission>[] = [
     {
@@ -48,7 +38,7 @@ export const columns: ColumnDef<Permission>[] = [
             return (
                 <div className="flex items-center space-x-2">
                     <Shield className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">{permission.display_name}</span>
+                    <span className="font-medium">{permission.name}</span>
                 </div>
             );
         },

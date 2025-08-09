@@ -53,4 +53,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/roles/{role}', [App\Http\Controllers\Api\Internal\RoleController::class, 'destroy']);
     Route::post('/roles/{role}/permissions', [App\Http\Controllers\Api\Internal\RoleController::class, 'assignPermissions']);
     Route::delete('/roles/{role}/permissions', [App\Http\Controllers\Api\Internal\RoleController::class, 'removePermissions']);
+    
+    // Store management
+    Route::get('/stores', [App\Http\Controllers\Api\V1\StoreController::class, 'index']);
+    Route::get('/stores/current', [App\Http\Controllers\Api\V1\StoreController::class, 'current']);
+    Route::post('/stores/switch', [App\Http\Controllers\Api\V1\StoreController::class, 'switch']);
+    Route::get('/stores/{store}', [App\Http\Controllers\Api\V1\StoreController::class, 'show']);
 });

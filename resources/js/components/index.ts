@@ -21,6 +21,12 @@ export { PageLayout } from './layout/page-layout';
 // Error handling
 export { ErrorBoundary } from './error-boundary';
 
+// Demo components
+export { ColorSchemeDemo } from './color-scheme-demo';
+
+// Store components
+export { StoreSwitcher } from './store-switcher';
+
 // Hooks
 export { useApi } from '../hooks/use-api';
 export { createEntityContext } from '../hooks/use-entity-context';

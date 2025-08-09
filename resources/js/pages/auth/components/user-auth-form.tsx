@@ -4,8 +4,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Link } from '@inertiajs/react';
 import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-react';
-import { Link } from '@tanstack/react-router';
 import { HTMLAttributes, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -67,7 +67,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                             </FormControl>
                             <FormMessage />
                             <Link
-                                to="/forgot-password"
+                                href="/forgot-password"
                                 className="absolute -top-0.5 right-0 text-sm font-medium text-muted-foreground hover:opacity-75"
                             >
                                 Forgot password?

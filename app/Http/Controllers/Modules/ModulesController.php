@@ -24,18 +24,14 @@ class ModulesController extends ModuleController
     {
         $user = Auth::user();
         
-        // Check if user has access to any module permissions
-        // This ensures users can only see modules they have access to
-        $this->permissionHelper->checkAnyPermission([
-            // Inventory permissions
-            'brand_view', 'product_view', 'category_view', 'unit_view', 'warehouse_view', 'supplier_view', 'customer_view',
-            // Sales permissions
-            'sale_view', 'sale_create', 'sale_edit', 'sale_delete',
-            // Settings permissions
-            'permission_view', 'role_view', 'user_view'
-        ]);
+        // $this->permissionHelper->checkAnyPermission([
+        //     'brand_view', 'product_view', 'category_view', 'unit_view', 'warehouse_view', 'supplier_view', 'customer_view',
+        //     'sale_view', 'sale_create', 'sale_edit', 'sale_delete',
+        //     'permission_view', 'role_view', 'user_view',
+        // ]);
         
         $userPermissions = $this->permissionHelper->getUserPermissionsData($user);
+        ray($userPermissions);
 
         return Inertia::render('modules/index', [
             'userPermissions' => $userPermissions,

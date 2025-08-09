@@ -16,10 +16,10 @@ class RoleService implements RoleServiceInterface
 
     public function getRoles(array $filters = []): LengthAwarePaginator
     {
-        $perPage = $filters['per_page'] ?? 10;
-        unset($filters['per_page']);
-
-        return $this->roleRepository->paginate($perPage);
+        $perPage = $filters['per_page'] ?? 15;
+        
+        // The repository will automatically use request parameters for filtering and pagination
+        return $this->roleRepository->paginateFiltered($perPage);
     }
 
     public function getRole(int $id)

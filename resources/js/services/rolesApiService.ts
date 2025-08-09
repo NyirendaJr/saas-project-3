@@ -1,4 +1,3 @@
-import { buildSpatieQueryParams } from '@/utils/spatie-query-builder';
 import apiClient from './axiosConfig';
 import { Permission } from './permissionsApiService';
 
@@ -24,11 +23,17 @@ export interface RoleFilters {
 
 export interface PaginationMeta {
     current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
     from: number;
+    last_page: number;
+    links: Array<{
+        url: string | null;
+        label: string;
+        active: boolean;
+    }>;
+    path: string;
+    per_page: number;
     to: number;
+    total: number;
 }
 
 export interface PaginatedResponse<T> {
@@ -46,9 +51,46 @@ class RolesApiService {
     private baseUrl = '/roles';
 
     async getRoles(filters: RoleFilters = {}): Promise<PaginatedResponse<Role>> {
-        const params = buildSpatieQueryParams(filters);
-        const response = await apiClient.get(`${this.baseUrl}?${params}`);
-        return response.data;
+        const params = new URLSearchParams();
+
+        // Handle Spatie Query Builder parameters
+        Object.entries(filters).forEach(([key, value]) => {
+            if (value !== undefined && value !== null && value !== '') {
+                // For filters, we need to prefix with 'filter[field_name]'
+                if (key !== 'sort' && key !== 'page' && key !== 'per_page' && key !== 'include' && key !== 'fields') {
+                    params.append(`filter[${key}]`, value.toString());
+                } else {
+                    params.append(key, value.toString());
+                }
+            }
+        });
+
+        try {
+            const response = await apiClient.get(`${this.baseUrl}?${params.toString()}`);
+            return response.data;
+        } catch (error) {
+            console.error('API Error:', error);
+            // Return empty response with default pagination on error
+            return {
+                data: [],
+                meta: {
+                    current_page: 1,
+                    last_page: 1,
+                    per_page: filters.per_page || 10,
+                    total: 0,
+                    from: 0,
+                    to: 0,
+                    path: this.baseUrl,
+                    links: [],
+                },
+                links: {
+                    first: '',
+                    last: '',
+                    prev: null,
+                    next: null,
+                },
+            };
+        }
     }
 
     async getRole(id: number): Promise<Role> {

@@ -1,3 +1,4 @@
+import { StoreSwitcher } from '@/components/store-switcher';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
@@ -35,7 +36,13 @@ export const Header = ({ className, fixed, children, ...props }: HeaderProps) =>
         >
             <SidebarTrigger variant="outline" className="scale-125 sm:scale-100" />
             <Separator orientation="vertical" className="h-6" />
-            {children}
+
+            {/* Store Switcher */}
+            <div className="max-w-xs flex-1">
+                <StoreSwitcher />
+            </div>
+
+            <div className="ml-auto flex items-center space-x-4">{children}</div>
         </header>
     );
 };
