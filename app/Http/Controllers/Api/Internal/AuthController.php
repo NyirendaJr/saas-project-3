@@ -28,10 +28,13 @@ class AuthController extends BaseApiController
             'password' => 'required|string',
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+        if (Auth::guard('web')->attempt($credentials)) {
+            // Only regenerate session if session is available
+            if ($request->hasSession()) {
+                $request->session()->regenerate();
+            }
             
-            $user = Auth::user();
+            $user = Auth::guard('web')->user();
             return $this->successResponse([
                 'user' => new UserResource($user),
             ]);
@@ -54,8 +57,10 @@ class AuthController extends BaseApiController
         $user = $this->authService->register($data);
         
         // Log the user in after registration
-        Auth::login($user['user']);
-        $request->session()->regenerate();
+        Auth::guard('web')->login($user['user']);
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
 
         return $this->successResponse([
             'user' => new UserResource($user['user']),
@@ -67,9 +72,12 @@ class AuthController extends BaseApiController
      */
     public function logout(Request $request): JsonResponse
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        Auth::guard('web')->logout();
+        
+        if ($request->hasSession()) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
 
         return $this->successResponse(['message' => 'Successfully logged out']);
     }

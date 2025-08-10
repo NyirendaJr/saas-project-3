@@ -1,3 +1,4 @@
+import { type GenericApiService, type PaginatedResponse } from '@/types/api';
 import apiClient from './axiosConfig';
 
 export interface Permission {
@@ -49,12 +50,6 @@ export interface ApiResponse<T> {
     message?: string;
 }
 
-export interface PaginatedResponse<T> {
-    data: T[];
-    links: PaginationLinks;
-    meta: PaginationMeta;
-}
-
 export interface PermissionFilters {
     // Global search (uses the 'global' filter)
     global?: string;
@@ -75,8 +70,15 @@ export interface PermissionFilters {
     fields?: string;
 }
 
-class PermissionsApiService {
+class PermissionsApiService implements GenericApiService<Permission, PermissionFilters> {
     private baseUrl = '/permissions';
+
+    /**
+     * Get paginated permissions with filters (implements GenericApiService)
+     */
+    async getItems(filters: PermissionFilters = {}): Promise<PaginatedResponse<Permission>> {
+        return this.getPermissions(filters);
+    }
 
     /**
      * Get paginated permissions with filters

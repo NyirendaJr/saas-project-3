@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { type PaginationMeta } from '@/services/permissionsApiService';
+import { type PaginationMeta } from '@/types/api';
 import { IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight } from '@tabler/icons-react';
 import { MoreHorizontal } from 'lucide-react';
 import { useCallback } from 'react';

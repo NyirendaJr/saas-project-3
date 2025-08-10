@@ -8,6 +8,8 @@ use App\Repositories\Permission\Concretes\PermissionRepository;
 use App\Repositories\Permission\Contracts\PermissionRepositoryInterface;
 use App\Repositories\Role\Concretes\RoleRepository;
 use App\Repositories\Role\Contracts\RoleRepositoryInterface;
+use App\Repositories\Brand\Concretes\BrandRepository;
+use App\Repositories\Brand\Contracts\BrandRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -21,6 +23,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
+        $this->app->bind(BrandRepositoryInterface::class, BrandRepository::class);
     }
 
     /**

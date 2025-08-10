@@ -16,6 +16,15 @@ class Role extends SpatieRole
         'description',
     ];
 
+    /**
+     * Fields that can be searched globally
+     */
+    public array $searchable = [
+        'name',
+        'description',
+        'guard_name',
+    ];
+
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

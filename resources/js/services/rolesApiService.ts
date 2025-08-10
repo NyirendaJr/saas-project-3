@@ -1,3 +1,4 @@
+import { type GenericApiService, type PaginatedResponse } from '@/types/api';
 import apiClient from './axiosConfig';
 import { Permission } from './permissionsApiService';
 
@@ -36,19 +37,15 @@ export interface PaginationMeta {
     total: number;
 }
 
-export interface PaginatedResponse<T> {
-    data: T[];
-    meta: PaginationMeta;
-    links: {
-        first: string;
-        last: string;
-        prev: string | null;
-        next: string | null;
-    };
-}
-
-class RolesApiService {
+class RolesApiService implements GenericApiService<Role, RoleFilters> {
     private baseUrl = '/roles';
+
+    /**
+     * Get paginated roles with filters (implements GenericApiService)
+     */
+    async getItems(filters: RoleFilters = {}): Promise<PaginatedResponse<Role>> {
+        return this.getRoles(filters);
+    }
 
     async getRoles(filters: RoleFilters = {}): Promise<PaginatedResponse<Role>> {
         const params = new URLSearchParams();

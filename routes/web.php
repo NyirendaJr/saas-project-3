@@ -31,6 +31,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/suppliers', [App\Http\Controllers\Modules\Inventory\InventoryController::class, 'suppliers'])->name('suppliers');
         Route::get('/customers', [App\Http\Controllers\Modules\Inventory\InventoryController::class, 'customers'])->name('customers');
     });
+    
+
 
     
     //Route::post('/permissions', [App\Http\Controllers\WebPermissionController::class, 'store'])->name('permissions.store');
@@ -42,13 +44,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Route::get('/permissions/guards/list', [App\Http\Controllers\WebPermissionController::class, 'getGuards'])->name('permissions.guards');
     //Route::post('/permissions/sync', [App\Http\Controllers\WebPermissionController::class, 'syncPermissions'])->name('permissions.sync');
 
-    // Role routes
-    Route::post('/roles', [App\Http\Controllers\WebRoleController::class, 'store'])->name('roles.store');
-    Route::get('/roles/{id}', [App\Http\Controllers\WebRoleController::class, 'show'])->name('roles.show');
-    Route::put('/roles/{id}', [App\Http\Controllers\WebRoleController::class, 'update'])->name('roles.update');
-    Route::delete('/roles/{id}', [App\Http\Controllers\WebRoleController::class, 'destroy'])->name('roles.destroy');
-    Route::delete('/roles', [App\Http\Controllers\WebRoleController::class, 'destroyMultiple'])->name('roles.destroyMultiple');
-    Route::get('/roles/guards/list', [App\Http\Controllers\WebRoleController::class, 'getGuards'])->name('roles.guards');
 });
 
 require __DIR__.'/settings.php';

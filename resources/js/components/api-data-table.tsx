@@ -1,7 +1,9 @@
 import { LaravelPagination } from '@/components/laravel-pagination';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TableBody, TableCell, TableHead, TableHeader, TableRow, Table as UITable } from '@/components/ui/table';
-import { permissionsApiService, type PaginationMeta, type PermissionFilters } from '@/services/permissionsApiService';
+import { type BaseFilters, type GenericApiService, type PaginationMeta } from '@/types/api';
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -15,10 +17,29 @@ import {
     getFilteredRowModel,
     getSortedRowModel,
     useReactTable,
+    type RowSelectionState,
     type Table,
 } from '@tanstack/react-table';
+import { RefreshCw } from 'lucide-react';
 import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+// Debounce utility function
+function useDebounce<T>(value: T, delay: number): T {
+    const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [value, delay]);
+
+    return debouncedValue;
+}
 
 declare module '@tanstack/react-table' {
     interface ColumnMeta<TData extends RowData, TValue> {
@@ -26,28 +47,36 @@ declare module '@tanstack/react-table' {
     }
 }
 
-interface ApiDataTableProps<TData, TValue> {
+interface ApiDataTableProps<TData, TValue, TFilters extends BaseFilters = BaseFilters> {
     columns: ColumnDef<TData, TValue>[];
     enableRowSelection?: boolean;
     toolbar?: React.ReactElement<{ table?: Table<TData> }>;
     emptyMessage?: string;
     loadingRows?: number;
-    initialFilters?: PermissionFilters;
+    initialFilters?: TFilters;
     onPaginationChange?: (pagination: PaginationMeta) => void;
     showPagination?: boolean;
+    apiService: GenericApiService<TData, TFilters>;
+    searchField?: keyof TFilters;
+    filterFields?: Array<keyof TFilters>;
 }
 
-export function ApiDataTable<TData, TValue>({
+export function ApiDataTable<TData, TValue, TFilters extends BaseFilters = BaseFilters>({
     columns,
     enableRowSelection = true,
     toolbar,
     emptyMessage = 'No results.',
     loadingRows = 5,
-    initialFilters = {},
+    initialFilters = {} as TFilters,
     onPaginationChange,
     showPagination = true,
-}: ApiDataTableProps<TData, TValue>) {
+    apiService,
+    searchField = 'global' as keyof TFilters,
+    filterFields = [],
+}: ApiDataTableProps<TData, TValue, TFilters>) {
     const [data, setData] = useState<TData[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [pagination, setPagination] = useState<PaginationMeta>({
         current_page: 1,
         last_page: 1,
@@ -58,53 +87,77 @@ export function ApiDataTable<TData, TValue>({
         path: '',
         links: [],
     });
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [filters, setFilters] = useState<PermissionFilters>(initialFilters);
 
-    const [rowSelection, setRowSelection] = React.useState({});
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-    const [sorting, setSorting] = React.useState<SortingState>([]);
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+    const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+    const [filters, setFilters] = useState<TFilters>(initialFilters);
+
+    // Debounce the search value to prevent excessive API calls
+    // Prefer the toolbar's configured searchKey (e.g., 'name') as the source of the search input,
+    // but still send it to the API under `searchField` (e.g., 'global').
+    const toolbarSearchKey = (toolbar as any)?.props?.searchKey as string | undefined;
+    const searchFilterId = (toolbarSearchKey ?? searchField) as string;
+    const searchFilter = columnFilters.find((f) => f.id === searchFilterId);
+    const debouncedSearchValue = useDebounce(searchFilter?.value || '', 500);
+
+    // Debounce other filter values as well
+    const debouncedColumnFilters = useDebounce(columnFilters, 300);
+
+    // Rate limiting to prevent too many concurrent requests
+    const isRequestInProgress = useRef(false);
+    const requestTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const retryCountRef = useRef(0);
+    const maxRetries = 3;
+    const isMountedRef = useRef(true);
 
     // Fetch data from API
     const fetchData = useCallback(
-        async (currentFilters: PermissionFilters) => {
+        async (apiFilters: TFilters) => {
+            // Prevent concurrent requests
+            if (isRequestInProgress.current) {
+                return;
+            }
+
+            // Clear any pending timeout
+            if (requestTimeoutRef.current) {
+                clearTimeout(requestTimeoutRef.current);
+            }
+
+            // Set rate limiting timeout
+            requestTimeoutRef.current = setTimeout(() => {
+                isRequestInProgress.current = false;
+            }, 1000); // Minimum 1 second between requests
+
+            isRequestInProgress.current = true;
+            setLoading(true);
+            setError(null);
+
             try {
-                setLoading(true);
-                setError(null);
-
-                // Convert table state to API filters for Spatie Query Builder
-                const apiFilters: PermissionFilters = {
-                    ...currentFilters,
-                    page: currentFilters.page || 1,
-                    per_page: currentFilters.per_page || 10,
-                };
-
-                // Add sorting if available (Spatie uses 'sort' parameter)
-                if (sorting.length > 0) {
-                    const sort = sorting[0];
-                    apiFilters.sort = sort.desc ? `-${sort.id}` : sort.id;
-                }
-
                 // Add global search if available
-                const searchFilter = columnFilters.find((f) => f.id === 'name');
-                if (searchFilter?.value) {
-                    apiFilters.global = searchFilter.value as string;
+                if (debouncedSearchValue) {
+                    (apiFilters as any)[searchField] = debouncedSearchValue as string;
                 }
 
-                // Add exact filters
-                const guardFilter = columnFilters.find((f) => f.id === 'guard_name');
-                if (guardFilter?.value) {
-                    apiFilters.guard_name = guardFilter.value as string;
-                }
+                // Add exact filters for specified filter fields
+                filterFields.forEach((field) => {
+                    const filter = debouncedColumnFilters.find((f) => f.id === field);
+                    if (filter?.value !== undefined && filter?.value !== null && filter?.value !== '') {
+                        const rawValue = filter.value as any;
+                        const normalizedValue = Array.isArray(rawValue) ? (rawValue.length > 0 ? rawValue[0] : undefined) : rawValue;
+                        if (normalizedValue !== undefined) {
+                            (apiFilters as any)[field] = normalizedValue as string;
+                        }
+                    }
+                });
 
-                const moduleFilter = columnFilters.find((f) => f.id === 'module');
-                if (moduleFilter?.value) {
-                    apiFilters.module = moduleFilter.value as string;
-                }
+                const response = await apiService.getItems(apiFilters);
 
-                const response = await permissionsApiService.getPermissions(apiFilters);
+                // Check if component is still mounted before updating state
+                if (!isMountedRef.current) {
+                    return;
+                }
 
                 // Ensure we have valid data and pagination
                 const validData = Array.isArray(response.data) ? response.data : [];
@@ -125,17 +178,53 @@ export function ApiDataTable<TData, TValue>({
                 setData(validData as TData[]);
                 setPagination(validPagination);
                 onPaginationChange?.(validPagination);
-            } catch (err) {
-                console.error('Error fetching permissions:', err);
-                setError('Failed to load permissions');
+            } catch (err: any) {
+                // Check if component is still mounted before updating state
+                if (!isMountedRef.current) {
+                    return;
+                }
+
+                console.error('Error fetching data:', err);
+
+                // Handle specific error types
+                if (err.message?.includes('ERR_INSUFFICIENT_RESOURCES')) {
+                    setError('Server resources are temporarily unavailable. Please try again in a moment.');
+
+                    // Retry with exponential backoff for resource issues
+                    if (retryCountRef.current < maxRetries) {
+                        retryCountRef.current++;
+                        const delay = Math.pow(2, retryCountRef.current) * 1000; // 2s, 4s, 8s
+
+                        setTimeout(() => {
+                            if (isMountedRef.current) {
+                                fetchData(apiFilters);
+                            }
+                        }, delay);
+
+                        return; // Don't set loading to false yet
+                    }
+                } else if (err.response?.status === 429) {
+                    setError('Too many requests. Please wait a moment before trying again.');
+                } else if (err.response?.status === 500) {
+                    setError('Server error. Please try again later.');
+                } else {
+                    setError('Failed to load data. Please check your connection and try again.');
+                }
+
+                // Reset retry count on non-resource errors
+                retryCountRef.current = 0;
                 setData([]);
                 // Keep the current pagination state on error
                 // Don't call onPaginationChange to avoid undefined errors
             } finally {
-                setLoading(false);
+                // Check if component is still mounted before updating state
+                if (isMountedRef.current) {
+                    setLoading(false);
+                    isRequestInProgress.current = false;
+                }
             }
         },
-        [sorting, columnFilters],
+        [sorting, debouncedColumnFilters, apiService, searchField, filterFields, debouncedSearchValue],
     );
 
     // Update filters when initialFilters prop changes (for external pagination control)
@@ -145,40 +234,47 @@ export function ApiDataTable<TData, TValue>({
 
     // Fetch data when filters change (for pagination)
     useEffect(() => {
+        // Reset retry count when filters change
+        retryCountRef.current = 0;
         fetchData(filters);
     }, [filters]);
 
-    // Fetch data when sorting or column filters change
+    // Cleanup function to clear timeouts
     useEffect(() => {
-        fetchData(filters);
-    }, [fetchData]);
+        return () => {
+            isMountedRef.current = false;
+            if (requestTimeoutRef.current) {
+                clearTimeout(requestTimeoutRef.current);
+            }
+        };
+    }, []);
 
-    // Update filters when table state changes
+    // Update filters when table state changes (but don't trigger fetchData here)
     useEffect(() => {
-        const newFilters: PermissionFilters = { ...filters };
+        const newFilters: TFilters = { ...filters };
 
         // Update global search
-        const searchFilter = columnFilters.find((f) => f.id === 'name');
-        if (searchFilter?.value) {
-            newFilters.global = searchFilter.value as string;
+        if (debouncedSearchValue) {
+            (newFilters as any)[searchField] = debouncedSearchValue as string;
         } else {
-            delete newFilters.global;
+            delete (newFilters as any)[searchField];
         }
 
-        // Update exact filters
-        const guardFilter = columnFilters.find((f) => f.id === 'guard_name');
-        if (guardFilter?.value) {
-            newFilters.guard_name = guardFilter.value as string;
-        } else {
-            delete newFilters.guard_name;
-        }
-
-        const moduleFilter = columnFilters.find((f) => f.id === 'module');
-        if (moduleFilter?.value) {
-            newFilters.module = moduleFilter.value as string;
-        } else {
-            delete newFilters.module;
-        }
+        // Update exact filters for specified filter fields
+        filterFields.forEach((field) => {
+            const filter = debouncedColumnFilters.find((f) => f.id === field);
+            if (filter?.value !== undefined && filter?.value !== null && filter?.value !== '') {
+                const rawValue = filter.value as any;
+                const normalizedValue = Array.isArray(rawValue) ? (rawValue.length > 0 ? rawValue[0] : undefined) : rawValue;
+                if (normalizedValue !== undefined) {
+                    (newFilters as any)[field] = normalizedValue as string;
+                } else {
+                    delete (newFilters as any)[field];
+                }
+            } else {
+                delete (newFilters as any)[field];
+            }
+        });
 
         // Update sorting (Spatie format)
         if (sorting.length > 0) {
@@ -188,8 +284,15 @@ export function ApiDataTable<TData, TValue>({
             delete newFilters.sort;
         }
 
-        setFilters(newFilters);
-    }, [columnFilters, sorting]);
+        // Always reset to first page when filters or sorting change
+        (newFilters as any).page = 1;
+
+        // Only update filters if they actually changed to prevent infinite loops
+        const hasChanges = JSON.stringify(newFilters) !== JSON.stringify(filters);
+        if (hasChanges) {
+            setFilters(newFilters);
+        }
+    }, [debouncedColumnFilters, sorting, searchField, filterFields, debouncedSearchValue]); // Removed 'filters' from dependencies
 
     const table = useReactTable({
         data,
@@ -235,17 +338,35 @@ export function ApiDataTable<TData, TValue>({
     };
 
     const renderError = () => {
+        if (!error) return null;
+
+        const isRetrying = retryCountRef.current > 0 && retryCountRef.current < maxRetries;
+
         return (
-            <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                    <div className="text-red-500">
-                        {error}
-                        <button onClick={() => fetchData(filters)} className="ml-2 text-blue-500 hover:underline">
-                            Retry
-                        </button>
+            <Alert variant="destructive" className="mb-4">
+                <AlertDescription className="flex items-center justify-between">
+                    <div className="flex flex-col gap-2">
+                        <span>{error}</span>
+                        {isRetrying && (
+                            <span className="text-sm text-muted-foreground">
+                                Retrying in {Math.pow(2, retryCountRef.current)} seconds... (Attempt {retryCountRef.current}/{maxRetries})
+                            </span>
+                        )}
                     </div>
-                </TableCell>
-            </TableRow>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                            retryCountRef.current = 0;
+                            fetchData(filters);
+                        }}
+                        disabled={loading || isRetrying}
+                    >
+                        <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                        {isRetrying ? 'Retrying...' : 'Retry'}
+                    </Button>
+                </AlertDescription>
+            </Alert>
         );
     };
 

@@ -10,7 +10,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-react';
-import { initializeCsrf } from '@/utils/csrf';
 
 type LoginForm = {
     email: string;
@@ -30,15 +29,12 @@ export default function Login({ status, canResetPassword }: LoginProps) {
         remember: false,
     });
 
-    const submit: FormEventHandler = async (e) => {
+    const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        await initializeCsrf();
-        console.log('csrf initialized');
         post(route('login'), {
-            onFinish: () => reset('password')
+            onFinish: () => reset('password'),
         });
     };
-
 
     return (
         <>

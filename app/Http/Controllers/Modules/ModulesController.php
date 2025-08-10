@@ -31,7 +31,6 @@ class ModulesController extends ModuleController
         // ]);
         
         $userPermissions = $this->permissionHelper->getUserPermissionsData($user);
-        ray($userPermissions);
 
         return Inertia::render('modules/index', [
             'userPermissions' => $userPermissions,

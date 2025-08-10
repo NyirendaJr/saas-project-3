@@ -24,8 +24,8 @@ export { ErrorBoundary } from './error-boundary';
 // Demo components
 export { ColorSchemeDemo } from './color-scheme-demo';
 
-// Store components
-export { StoreSwitcher } from './store-switcher';
+// Warehouse components
+export { WarehouseSwitcher } from './warehouse-switcher';
 
 // Hooks
 export { useApi } from '../hooks/use-api';
