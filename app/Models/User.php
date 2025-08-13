@@ -24,6 +24,7 @@ class User extends Authenticatable implements JWTSubject
     use HasApiTokens;
     use Notifiable;
     use HasRoles;
+    use HasUuids;
 
     /**
      * The attributes that are mass assignable.
@@ -35,8 +36,8 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'password',
         'company_id',
-        'current_store_id',
-        'store_permissions',
+        'current_warehouse_id',
+        'warehouse_permissions',
     ];
 
     /**
@@ -59,7 +60,7 @@ class User extends Authenticatable implements JWTSubject
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'store_permissions' => 'array',
+            'warehouse_permissions' => 'array',
         ];
     }
 
@@ -90,71 +91,72 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Get the current store the user is working in
+     * Get the current warehouse the user is working in
      */
-    public function currentStore(): BelongsTo
+    public function currentWarehouse(): BelongsTo
     {
-        return $this->belongsTo(Store::class, 'current_store_id');
+        return $this->belongsTo(Warehouse::class, 'current_warehouse_id');
     }
 
     /**
-     * Get all stores the user has access to
+     * Get all warehouses the user has access to
      */
-    public function stores(): BelongsToMany
+    public function warehouses(): BelongsToMany
     {
-        return $this->belongsToMany(Store::class, 'user_stores')
+        return $this->belongsToMany(Warehouse::class, 'user_warehouses')
+                    ->using(UserWarehouse::class)
                     ->withPivot(['permissions', 'is_active'])
                     ->withTimestamps();
     }
 
     /**
-     * Get active stores the user has access to
+     * Get active warehouses the user has access to
      */
-    public function activeStores(): BelongsToMany
+    public function activeWarehouses(): BelongsToMany
     {
-        return $this->stores()->wherePivot('is_active', true);
+        return $this->warehouses()->wherePivot('is_active', true);
     }
 
     /**
-     * Check if user has access to a specific store
+     * Check if user has access to a specific warehouse
      */
-    public function hasAccessToStore(Store $store): bool
+    public function hasAccessToWarehouse(Warehouse $warehouse): bool
     {
-        return $this->stores()->where('stores.id', $store->id)->exists();
+        return $this->warehouses()->where('warehouses.id', $warehouse->id)->exists();
     }
 
     /**
-     * Switch to a different store
+     * Switch to a different warehouse
      */
-    public function switchToStore(Store $store): bool
+    public function switchToWarehouse(Warehouse $warehouse): bool
     {
-        if (!$this->hasAccessToStore($store)) {
+        if (!$this->hasAccessToWarehouse($warehouse)) {
             return false;
         }
 
-        $this->update(['current_store_id' => $store->id]);
+        $this->update(['current_warehouse_id' => $warehouse->id]);
         return true;
     }
 
     /**
-     * Get user's permissions for current store
+     * Get user's permissions for current warehouse
      */
-    public function getCurrentStorePermissions(): array
+    public function getCurrentWarehousePermissions(): array
     {
-        if (!$this->currentStore) {
+        if (!$this->currentWarehouse) {
             return [];
         }
 
-        $userStore = $this->stores()->where('stores.id', $this->currentStore->id)->first();
-        return $userStore?->pivot?->permissions ?? [];
+        $userWarehouse = $this->warehouses()->where('warehouses.id', $this->currentWarehouse->id)->first();
+        return $userWarehouse?->pivot?->permissions ?? [];
     }
 
     /**
-     * Check if user has permission in current store
+     * Check if user has permission in current warehouse
      */
-    public function hasStorePermission(string $permission): bool
+    public function hasWarehousePermission(string $permission): bool
     {
-        $permissions = $this->getCurrentStorePermissions();
+        $permissions = $this->getCurrentWarehousePermissions();
         return in_array($permission, $permissions);
     }
 

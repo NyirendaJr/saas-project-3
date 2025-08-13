@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Company;
-use App\Models\Store;
+use App\Models\Warehouse;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -35,64 +35,47 @@ class MultiTenancySeeder extends Seeder
             ]
         );
 
-        // Create stores/warehouses
-        $stores = [
+        // Create warehouses
+        $warehouses = [
             [
                 'name' => 'Main Warehouse',
-                'code' => 'WH001',
-                'type' => 'warehouse',
                 'address' => '456 Warehouse Drive, Industrial Zone',
                 'phone' => '+1234567891',
                 'email' => 'warehouse@demoretail.com',
             ],
             [
-                'name' => 'Downtown Store',
-                'code' => 'ST001',
-                'type' => 'store',
+                'name' => 'Downtown Warehouse',
                 'address' => '789 Main Street, Downtown',
                 'phone' => '+1234567892',
                 'email' => 'downtown@demoretail.com',
-                'operating_hours' => [
-                    'monday' => ['open' => '09:00', 'close' => '20:00'],
-                    'tuesday' => ['open' => '09:00', 'close' => '20:00'],
-                    'wednesday' => ['open' => '09:00', 'close' => '20:00'],
-                    'thursday' => ['open' => '09:00', 'close' => '20:00'],
-                    'friday' => ['open' => '09:00', 'close' => '22:00'],
-                    'saturday' => ['open' => '10:00', 'close' => '22:00'],
-                    'sunday' => ['open' => '12:00', 'close' => '18:00'],
-                ],
             ],
             [
-                'name' => 'Mall Outlet',
-                'code' => 'OT001',
-                'type' => 'outlet',
+                'name' => 'Mall Distribution Center',
                 'address' => '321 Shopping Mall, Level 2',
                 'phone' => '+1234567893',
                 'email' => 'mall@demoretail.com',
             ],
             [
                 'name' => 'Distribution Center North',
-                'code' => 'DC001',
-                'type' => 'distribution_center',
                 'address' => '654 Logistics Park, North Region',
                 'phone' => '+1234567894',
                 'email' => 'dcnorth@demoretail.com',
             ],
         ];
 
-        $createdStores = [];
-        foreach ($stores as $storeData) {
-            $store = Store::firstOrCreate(
+        $createdWarehouses = [];
+        foreach ($warehouses as $warehouseData) {
+            $warehouse = Warehouse::firstOrCreate(
                 [
                     'company_id' => $company->id,
-                    'code' => $storeData['code']
+                    'name' => $warehouseData['name']
                 ],
                 [
                     'company_id' => $company->id,
-                    ...$storeData,
+                    ...$warehouseData,
                 ]
             );
-            $createdStores[] = $store;
+            $createdWarehouses[] = $warehouse;
         }
 
         // Check for any existing user and update the first one found
@@ -104,7 +87,7 @@ class MultiTenancySeeder extends Seeder
             $adminUser->update([
                 'name' => 'System Administrator',
                 'company_id' => $company->id,
-                'current_store_id' => $createdStores[0]->id, // Set main warehouse as current
+                'current_warehouse_id' => $createdWarehouses[0]->id, // Set main warehouse as current
             ]);
             $this->command->info("Updated existing user: {$adminUser->email}");
         } else {
@@ -114,14 +97,14 @@ class MultiTenancySeeder extends Seeder
                 'email' => 'admin@demoretail.com',
                 'password' => Hash::make('password'),
                 'company_id' => $company->id,
-                'current_store_id' => $createdStores[0]->id,
+                'current_warehouse_id' => $createdWarehouses[0]->id,
                 'email_verified_at' => now(),
             ]);
         }
 
-        // Assign admin to all stores with full permissions
-        foreach ($createdStores as $store) {
-            $adminUser->stores()->syncWithoutDetaching([$store->id => [
+        // Assign admin to all warehouses with full permissions
+        foreach ($createdWarehouses as $warehouse) {
+            $adminUser->warehouses()->syncWithoutDetaching([$warehouse->id => [
                 'permissions' => json_encode([
                     'manage_inventory',
                     'view_reports',
@@ -139,13 +122,13 @@ class MultiTenancySeeder extends Seeder
             [
                 'name' => 'Warehouse Manager',
                 'email' => 'warehouse.manager@demoretail.com',
-                'stores' => [$createdStores[0]], // Only main warehouse
+                'warehouses' => [$createdWarehouses[0]], // Only main warehouse
                 'permissions' => ['manage_inventory', 'view_reports', 'manage_products'],
             ],
             [
-                'name' => 'Store Manager', 
-                'email' => 'store.manager@demoretail.com',
-                'stores' => [$createdStores[1], $createdStores[2]], // Downtown store and mall outlet
+                'name' => 'Inventory Manager', 
+                'email' => 'inventory.manager@demoretail.com',
+                'warehouses' => [$createdWarehouses[1], $createdWarehouses[2]], // Downtown and mall warehouses
                 'permissions' => ['manage_inventory', 'view_reports', 'process_orders'],
             ],
         ];
@@ -155,31 +138,33 @@ class MultiTenancySeeder extends Seeder
         $userIndex = 0;
 
         foreach ($users as $userData) {
-            if ($userIndex < $remainingUsers->count() && $remainingUsers->get($userIndex)) {
-                // Update existing user
-                $user = $remainingUsers->get($userIndex);
+            // Use firstOrCreate to handle duplicates gracefully
+            $user = User::firstOrCreate(
+                ['email' => $userData['email']], // Find by email
+                [
+                    'name' => $userData['name'],
+                    'password' => Hash::make('password'),
+                    'company_id' => $company->id,
+                    'current_warehouse_id' => $userData['warehouses'][0]->id,
+                    'email_verified_at' => now(),
+                ]
+            );
+
+            // Update existing user if found
+            if (!$user->wasRecentlyCreated) {
                 $user->update([
                     'name' => $userData['name'],
                     'company_id' => $company->id,
-                    'current_store_id' => $userData['stores'][0]->id,
+                    'current_warehouse_id' => $userData['warehouses'][0]->id,
                 ]);
                 $this->command->info("Updated existing user: {$user->email} -> {$userData['name']}");
             } else {
-                // Create new user
-                $user = User::create([
-                    'name' => $userData['name'],
-                    'email' => $userData['email'],
-                    'password' => Hash::make('password'),
-                    'company_id' => $company->id,
-                    'current_store_id' => $userData['stores'][0]->id,
-                    'email_verified_at' => now(),
-                ]);
                 $this->command->info("Created new user: {$userData['email']}");
             }
 
-            // Assign user to specified stores
-            foreach ($userData['stores'] as $store) {
-                $user->stores()->syncWithoutDetaching([$store->id => [
+            // Assign user to specified warehouses
+            foreach ($userData['warehouses'] as $warehouse) {
+                $user->warehouses()->syncWithoutDetaching([$warehouse->id => [
                     'permissions' => json_encode($userData['permissions']),
                     'is_active' => true,
                 ]]);
@@ -190,13 +175,12 @@ class MultiTenancySeeder extends Seeder
 
         $this->command->info('Multi-tenancy demo data created successfully!');
         $this->command->info("Company: {$company->name}");
-        $this->command->info("Stores created: " . count($createdStores));
+        $this->command->info("Warehouses created: " . count($createdWarehouses));
         $this->command->info("Users created: " . (count($users) + 1));
         $this->command->info('');
         $this->command->info('Login credentials:');
         $this->command->info('Admin: admin@demoretail.com / password');
         $this->command->info('Warehouse Manager: warehouse.manager@demoretail.com / password');
-        $this->command->info('Store Manager: store.manager@demoretail.com / password');
-        $this->command->info('Sales Associate: sales@demoretail.com / password');
+        $this->command->info('Inventory Manager: inventory.manager@demoretail.com / password');
     }
 }

@@ -1,3 +1,4 @@
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,6 +17,9 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubButton,
+    SidebarMenuSubItem,
     SidebarRail,
     useSidebar,
 } from '@/components/ui/sidebar';
@@ -24,7 +28,7 @@ import { type ModuleSidebarData } from '@/types/modules';
 import { isItemActive } from '@/utils/route-helper';
 import { Link, usePage } from '@inertiajs/react';
 import { IconSettings, IconShoppingCart } from '@tabler/icons-react';
-import { ChevronsUpDown } from 'lucide-react';
+import { ChevronRight, ChevronsUpDown } from 'lucide-react';
 import { ReactNode } from 'react';
 import { NavUser } from '../layout/nav-user';
 import { Badge } from '../ui/badge';
@@ -128,6 +132,44 @@ const SidebarMenuLink = ({ item }: { item: any }) => {
     const { url, component } = usePage();
     const isActive = isItemActive(item, url, component);
 
+    // If item has sub-items, render as collapsible
+    if (item.items && item.items.length > 0) {
+        return (
+            <Collapsible asChild defaultOpen={false}>
+                <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                        <SidebarMenuButton tooltip={item.title}>
+                            {item.icon && <item.icon />}
+                            <span>{item.title}</span>
+                            {item.badge && <NavBadge>{item.badge}</NavBadge>}
+                            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                        </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                        <SidebarMenuSub>
+                            {item.items.map((subItem: any, index: number) => {
+                                const subKey = `${subItem.title}-${subItem.url}-${index}`;
+                                const subIsActive = isItemActive(subItem, url, component);
+                                return (
+                                    <SidebarMenuSubItem key={subKey}>
+                                        <SidebarMenuSubButton asChild isActive={subIsActive}>
+                                            <Link href={subItem.url} onClick={() => setOpenMobile(false)}>
+                                                {subItem.icon && <subItem.icon />}
+                                                <span>{subItem.title}</span>
+                                                {subItem.badge && <NavBadge>{subItem.badge}</NavBadge>}
+                                            </Link>
+                                        </SidebarMenuSubButton>
+                                    </SidebarMenuSubItem>
+                                );
+                            })}
+                        </SidebarMenuSub>
+                    </CollapsibleContent>
+                </SidebarMenuItem>
+            </Collapsible>
+        );
+    }
+
+    // Regular menu item without sub-items
     return (
         <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>

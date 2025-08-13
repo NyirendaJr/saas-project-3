@@ -50,12 +50,9 @@ class InventoryController extends ModuleController
      */
     public function brands(Request $request): Response
     {
-        $user = Auth::user();
         $this->permissionHelper->checkPermission('brand_view');
-        $userPermissions = $this->permissionHelper->getUserPermissionsData($user);
 
         return Inertia::render('modules/inventory/brands/index', [
-            'userPermissions' => $userPermissions,
             'module' => $this->getModuleData(),
         ]);
     }

@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             InitialProjectSeeder::class,
+            RolesSeeder::class,
             // PermissionSeeder::class, // Now handled by InitialProjectSeeder
             //LocationSeeder::class,
         ]);

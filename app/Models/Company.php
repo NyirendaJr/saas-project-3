@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 class Company extends Model
 {
     use HasFactory;
+    use HasUuids;
 
     protected $fillable = [
         'name',
@@ -43,19 +44,19 @@ class Company extends Model
     }
 
     /**
-     * Get the stores for the company
+     * Get the warehouses for the company
      */
-    public function stores(): HasMany
+    public function warehouses(): HasMany
     {
-        return $this->hasMany(Store::class);
+        return $this->hasMany(Warehouse::class);
     }
 
     /**
-     * Get the active stores for the company
+     * Get the active warehouses for the company
      */
-    public function activeStores(): HasMany
+    public function activeWarehouses(): HasMany
     {
-        return $this->stores()->where('is_active', true);
+        return $this->warehouses()->where('is_active', true);
     }
 
     /**

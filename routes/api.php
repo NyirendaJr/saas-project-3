@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\EnsureWarehouseContext;
+// Removed Spatie multitenancy middleware
 
 /*
 |--------------------------------------------------------------------------
@@ -24,7 +26,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Internal API routes for the SPA
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', EnsureWarehouseContext::class])->group(function () {
     // User management
     Route::get('/users', [App\Http\Controllers\Api\Internal\UserController::class, 'index']);
     Route::get('/users/{user}', [App\Http\Controllers\Api\Internal\UserController::class, 'show']);
@@ -54,9 +56,21 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/roles/{role}/permissions', [App\Http\Controllers\Api\Internal\RoleController::class, 'assignPermissions']);
     Route::delete('/roles/{role}/permissions', [App\Http\Controllers\Api\Internal\RoleController::class, 'removePermissions']);
     
-    // Store management
-    Route::get('/stores', [App\Http\Controllers\Api\V1\StoreController::class, 'index']);
-    Route::get('/stores/current', [App\Http\Controllers\Api\V1\StoreController::class, 'current']);
-    Route::post('/stores/switch', [App\Http\Controllers\Api\V1\StoreController::class, 'switch']);
-    Route::get('/stores/{store}', [App\Http\Controllers\Api\V1\StoreController::class, 'show']);
+    // Warehouse management
+    Route::get('/warehouses', [App\Http\Controllers\Api\Internal\WarehouseController::class, 'index']);
+    Route::get('/warehouses/current', [App\Http\Controllers\Api\Internal\WarehouseController::class, 'current']);
+    Route::post('/warehouses/switch', [App\Http\Controllers\Api\Internal\WarehouseController::class, 'switch']);
+    Route::get('/warehouses/{warehouse}', [App\Http\Controllers\Api\Internal\WarehouseController::class, 'show']);
+    
+    // Brand management (Inventory Module)
+    Route::prefix('brands')->name('brands.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Api\Internal\BrandController::class, 'index'])->name('index');
+        Route::get('/all', [App\Http\Controllers\Api\Internal\BrandController::class, 'all'])->name('all');
+        Route::get('/{brand}', [App\Http\Controllers\Api\Internal\BrandController::class, 'show'])->name('show');
+        Route::post('/', [App\Http\Controllers\Api\Internal\BrandController::class, 'store'])->name('store');
+        Route::put('/{brand}', [App\Http\Controllers\Api\Internal\BrandController::class, 'update'])->name('update');
+        Route::delete('/{brand}', [App\Http\Controllers\Api\Internal\BrandController::class, 'destroy'])->name('destroy');
+        Route::post('/{brand}/toggle-status', [App\Http\Controllers\Api\Internal\BrandController::class, 'toggleStatus'])->name('toggle-status');
+        Route::get('/by-status/{status}', [App\Http\Controllers\Api\Internal\BrandController::class, 'getByStatus'])->name('by-status');
+    });
 });

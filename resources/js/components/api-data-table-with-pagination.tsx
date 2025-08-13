@@ -1,24 +1,30 @@
-import { type PaginationMeta, type PermissionFilters } from '@/services/permissionsApiService';
-import { useCallback, useState } from 'react';
+import { type BaseFilters, type GenericApiService, type PaginationMeta } from '@/types/api';
+import { useCallback, useEffect, useState } from 'react';
 import { ApiDataTable } from './api-data-table';
 import { ApiPagination } from './api-pagination';
 
-interface ApiDataTableWithPaginationProps<TData, TValue, TFilters extends PermissionFilters = PermissionFilters> {
+interface ApiDataTableWithPaginationProps<TData, TValue, TFilters extends BaseFilters = BaseFilters> {
     columns: any[];
     enableRowSelection?: boolean;
     toolbar?: React.ReactElement<{ table?: any }>;
     emptyMessage?: string;
     loadingRows?: number;
     initialFilters?: TFilters;
+    apiService: GenericApiService<TData, TFilters>;
+    searchField?: keyof TFilters;
+    filterFields?: Array<keyof TFilters>;
 }
 
-export function ApiDataTableWithPagination<TData, TValue, TFilters extends PermissionFilters = PermissionFilters>({
+export function ApiDataTableWithPagination<TData, TValue, TFilters extends BaseFilters = BaseFilters>({
     columns,
     enableRowSelection = true,
     toolbar,
     emptyMessage = 'No results.',
     loadingRows = 5,
-    initialFilters,
+    initialFilters = {} as TFilters,
+    apiService,
+    searchField = 'global' as keyof TFilters,
+    filterFields = [],
 }: ApiDataTableWithPaginationProps<TData, TValue, TFilters>) {
     const [pagination, setPagination] = useState<PaginationMeta>({
         current_page: 1,
@@ -32,7 +38,7 @@ export function ApiDataTableWithPagination<TData, TValue, TFilters extends Permi
     });
     const [loading, setLoading] = useState(false);
     const [currentFilters, setCurrentFilters] = useState<TFilters>({
-        ...initialFilters,
+        ...(initialFilters ?? ({} as TFilters)),
         page: 1,
         per_page: 10,
     } as TFilters & { page: number; per_page: number });
@@ -57,6 +63,18 @@ export function ApiDataTableWithPagination<TData, TValue, TFilters extends Permi
         }));
     }, []);
 
+    const handlePaginationChange = useCallback((newPagination: PaginationMeta | null) => {
+        if (newPagination && typeof newPagination === 'object') {
+            setPagination(newPagination);
+            setLoading(false);
+        }
+    }, []);
+
+    // Reset loading state when filters change
+    useEffect(() => {
+        setLoading(false);
+    }, [currentFilters]);
+
     return (
         <div className="space-y-4">
             <ApiDataTable
@@ -67,12 +85,10 @@ export function ApiDataTableWithPagination<TData, TValue, TFilters extends Permi
                 loadingRows={loadingRows}
                 showPagination={false}
                 initialFilters={currentFilters}
-                onPaginationChange={(newPagination) => {
-                    if (newPagination && typeof newPagination === 'object') {
-                        setPagination(newPagination);
-                        setLoading(false);
-                    }
-                }}
+                apiService={apiService}
+                searchField={searchField}
+                filterFields={filterFields}
+                onPaginationChange={handlePaginationChange}
             />
             <ApiPagination pagination={pagination} onPageChange={handlePageChange} onPageSizeChange={handlePageSizeChange} loading={loading} />
         </div>

@@ -1,5 +1,17 @@
 import { type ModuleSidebarData } from '@/types/modules';
-import { IconChartBar, IconChartLine, IconKey, IconLayoutDashboard, IconSettings, IconShoppingCart } from '@tabler/icons-react';
+import {
+    IconBox,
+    IconCategory,
+    IconChartBar,
+    IconChartLine,
+    IconKey,
+    IconLayoutDashboard,
+    IconPackage,
+    IconPalette,
+    IconSettings,
+    IconShoppingCart,
+    IconTag,
+} from '@tabler/icons-react';
 
 export const moduleSidebars: Record<string, ModuleSidebarData> = {
     sales: {
@@ -24,6 +36,50 @@ export const moduleSidebars: Record<string, ModuleSidebarData> = {
                         title: 'Reports',
                         url: '/modules/sales/reports',
                         icon: IconChartLine,
+                    },
+                ],
+            },
+        ],
+    },
+
+    inventory: {
+        moduleId: 'inventory',
+        moduleName: 'Inventory Management',
+        moduleIcon: IconPackage,
+        navGroups: [
+            {
+                title: 'Dashboard',
+                items: [
+                    {
+                        title: 'Overview',
+                        url: '/modules/inventory',
+                        icon: IconLayoutDashboard,
+                    },
+                    {
+                        title: 'Product Manager',
+                        icon: IconBox,
+                        items: [
+                            {
+                                title: 'Brands',
+                                url: '/modules/inventory/brands',
+                                icon: IconTag,
+                            },
+                            {
+                                title: 'Categories',
+                                url: '/modules/inventory/categories',
+                                icon: IconCategory,
+                            },
+                            {
+                                title: 'Variations',
+                                url: '/modules/inventory/variations',
+                                icon: IconPalette,
+                            },
+                            {
+                                title: 'Products',
+                                url: '/modules/inventory/products',
+                                icon: IconBox,
+                            },
+                        ],
                     },
                 ],
             },

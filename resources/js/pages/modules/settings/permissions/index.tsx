@@ -1,5 +1,6 @@
 import { ApiDataTableWithPagination, DataTableToolbar, PageLayout } from '@/components';
 import { getModuleSidebar } from '@/data/module-sidebars';
+import { permissionsApiService } from '@/services/permissionsApiService';
 import { type Module } from '@/types/modules';
 import { Head } from '@inertiajs/react';
 import { columns } from './components/permissions-columns';
@@ -15,10 +16,7 @@ interface PermissionsModuleProps {
     };
 }
 
-export default function PermissionsModule({
-    module,
-    flash,
-}: PermissionsModuleProps) {
+export default function PermissionsModule({ module, flash }: PermissionsModuleProps) {
     const sidebarData = getModuleSidebar('settings');
 
     if (!module || !sidebarData) {
@@ -47,6 +45,9 @@ export default function PermissionsModule({
                 >
                     <ApiDataTableWithPagination
                         columns={columns}
+                        apiService={permissionsApiService}
+                        searchField="global"
+                        filterFields={['guard_name', 'module']}
                         toolbar={
                             <DataTableToolbar
                                 searchKey="name"

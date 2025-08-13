@@ -3,16 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-class UserStore extends Model
+class UserWarehouse extends Pivot
 {
     use HasFactory;
+    use HasUuids;
+
+    protected $table = 'user_warehouses';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'user_id',
-        'store_id',
+        'warehouse_id',
         'permissions',
         'is_active',
     ];
@@ -31,15 +37,15 @@ class UserStore extends Model
     }
 
     /**
-     * Get the store
+     * Get the warehouse
      */
-    public function store(): BelongsTo
+    public function warehouse(): BelongsTo
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(Warehouse::class);
     }
 
     /**
-     * Check if user has specific permission for this store
+     * Check if user has specific permission for this warehouse
      */
     public function hasPermission(string $permission): bool
     {
@@ -48,7 +54,7 @@ class UserStore extends Model
     }
 
     /**
-     * Grant permission to user for this store
+     * Grant permission to user for this warehouse
      */
     public function grantPermission(string $permission): void
     {
@@ -60,7 +66,7 @@ class UserStore extends Model
     }
 
     /**
-     * Revoke permission from user for this store
+     * Revoke permission from user for this warehouse
      */
     public function revokePermission(string $permission): void
     {
@@ -70,7 +76,7 @@ class UserStore extends Model
     }
 
     /**
-     * Scope to filter active user-store relationships
+     * Scope to filter active user-warehouse relationships
      */
     public function scopeActive($query)
     {

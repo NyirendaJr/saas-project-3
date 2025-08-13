@@ -1,6 +1,6 @@
-import { DataTableToolbar, PageLayout } from '@/components';
-import { RolesDataTableWithPagination } from '@/components/roles-data-table-with-pagination';
+import { ApiDataTableWithPagination, DataTableToolbar, PageLayout } from '@/components';
 import { getModuleSidebar } from '@/data/module-sidebars';
+import { rolesApiService } from '@/services/rolesApiService';
 import { type Module } from '@/types/modules';
 import { Head } from '@inertiajs/react';
 import { columns } from './components/roles-columns';
@@ -47,8 +47,11 @@ export default function RolesModule({ module, userPermissions = [], roles = [], 
                     module={module}
                     sidebarData={sidebarData}
                 >
-                    <RolesDataTableWithPagination
+                    <ApiDataTableWithPagination
                         columns={columns}
+                        apiService={rolesApiService}
+                        searchField="global"
+                        filterFields={['guard_name']}
                         toolbar={
                             <DataTableToolbar
                                 searchKey="name"

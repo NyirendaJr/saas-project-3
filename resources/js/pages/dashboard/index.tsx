@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AuthenticatedLayout } from '@/layouts/app-layout';
-import JWTTest from '../../components/jwt-test';
+// import JWTTest from '../../components/jwt-test';
 import { Overview } from './components/overview';
 import { RecentSales } from './components/recent-sales';
 
@@ -160,9 +160,7 @@ export default function Dashboard() {
                                 <CardTitle>JWT Service Test</CardTitle>
                                 <CardDescription>Test JWT token functionality</CardDescription>
                             </CardHeader>
-                            <CardContent>
-                                <JWTTest />
-                            </CardContent>
+                            <CardContent>{/* <JWTTest /> */}</CardContent>
                         </Card>
                     </div>
                 </TabsContent>

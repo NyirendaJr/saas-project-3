@@ -2,10 +2,10 @@
 
 namespace App\Repositories\Role\Concretes;
 
+use App\Models\Role;
 use App\Repositories\Base\Concretes\QueryableRepository;
 use App\Repositories\Role\Contracts\RoleRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
-use Spatie\Permission\Models\Role;
 use Spatie\QueryBuilder\AllowedFilter;
 
 class RoleRepository extends QueryableRepository implements RoleRepositoryInterface
@@ -15,6 +15,7 @@ class RoleRepository extends QueryableRepository implements RoleRepositoryInterf
      */
     protected function model(): string
     {
+        // Use the application Role model so that global search ($searchable) works
         return Role::class;
     }
 
